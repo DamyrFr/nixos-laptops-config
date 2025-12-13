@@ -25,7 +25,6 @@
           ./modules/security.nix
           ./modules/services.nix
           ./modules/system.nix
-          ./modules/hyprland.nix
 
           home-manager.nixosModules.home-manager
           {

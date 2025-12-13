@@ -2,7 +2,8 @@
 
 {
   imports = [
-    ./hyprland.nix
+#    ./hyprland.nix
+    ./zellij.nix
   ];
 
   home.username = username;
@@ -39,6 +40,7 @@
     kubectl
     kubecolor
     scaleway-cli
+    fastfetch
   ];
 
   # Zsh configuration
