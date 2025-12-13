@@ -2,7 +2,6 @@
   description = "Damyr NixOS configuration";
 
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -27,7 +26,6 @@
           ./modules/services.nix
           ./modules/system.nix
           ./modules/hyprland.nix
-          #./modules/gnome.nix
 
           home-manager.nixosModules.home-manager
           {
@@ -45,13 +43,6 @@
       #  system = "x86_64-linux";
       #  modules = [
       #    ./hosts/waays/configuration.nix
-      #  ];
-      #};
-      #
-      #brainfuck = nixpkgs.lib.nixosSystem {
-      #  system = "x86_64-linux";
-      #  modules = [
-      #    ./hosts/brainfuck/configuration.nix
       #  ];
       #};
     };

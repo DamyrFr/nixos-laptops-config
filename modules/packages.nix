@@ -92,9 +92,7 @@ in
     # Security tools
     gnupg
     pass
-    # scdaemon, pcscd, and dirmngr are included with gnupg or enabled via services
     clamav
-    # rkhunter and chkrootkit - available but may need manual configuration
     apparmor-profiles
     apparmor-utils
 
@@ -121,36 +119,8 @@ in
 
     # Other utilities
     cups
-
-    # Terraform
-    terraform
-    terraform-ls
     tfsec
     terraform-docs
-    terragrunt
-
-    # Kubernetes
-    kubectl
-    kubecolor
-    helm
-
-    # HashiCorp tools
-    packer
-    vagrant
-
-    # OpenTofu
-    opentofu
-
-    # Zellij (terminal multiplexer)
-    zellij
-
-    # Additional development tools
-
-    # Starship prompt
-    starship
-
-    # Neovim with dependencies
-    neovim
 
     # Build tools and compilers
     cmake
@@ -159,27 +129,13 @@ in
     # Python development
     python311
     python311Packages.virtualenv
-    python311Packages.pip
-
-    # Node.js development
-    nodejs
-    nodePackages.npm
-    yarn
-
-    # Go development
-    go
 
     # Ruby development
-    ruby
     bundler
-    # tlp - conflicts with GNOME power management, see services.nix
 
-    #IA
+    # AI tools
     claude-code
   ];
-
-  # Enable Docker/Podman for container development
-  virtualisation.podman.enable = true;
 
   # Enable GPG agent
   programs.gnupg.agent = {
