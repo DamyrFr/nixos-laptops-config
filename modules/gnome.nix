@@ -1,87 +1,32 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
-  # Enable X11
-  services.xserver = {
-    enable = true;
-
-    # Keyboard layout
-    xkb = {
-      layout = "fr";
-      variant = "";
-    };
-  };
-
-  # Enable GNOME Desktop Environment
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  # GNOME packages to install
-  environment.systemPackages = with pkgs; [
-    gnome-tweaks
-    gnomeExtensions.vitals
-    gnomeExtensions.user-themes
-    chromium
-    gnome-boxes
-    wl-clipboard
-    lm_sensors
-    # Paper icon theme and Marble shell theme would need to be packaged or installed manually
-  ];
-
-  # Exclude unwanted GNOME applications
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-tour
-    gnome-music
-    epiphany  # GNOME web browser
-    geary     # Email client
-    totem     # Video player
-    # Games
-    gnome-robots
-    gnome-mahjongg
-    gnome-mines
-    gnome-nibbles
-    gnome-taquin
-    gnome-tetravex
-    aisleriot  # Solitaire
-    atomix
-    hitori
-    iagno
-    quadrapassel
-    swell-foop
-    tali
-  ];
-
-  # Install fonts
-  fonts.packages = with pkgs; [
-    nerd-fonts.hack
-    nerd-fonts.symbols-only
-    nerd-fonts.jetbrains-mono
-  ];
-
-  # GNOME dconf settings (per-user configuration)
-  # These should be set using home-manager for better declarative management
-  # or manually using dconf after first login
-  programs.dconf.enable = true;
-
-  # Note: For full dconf configuration, consider using home-manager
-  # Here's an example of what the home-manager configuration would look like:
-  #
-  home-manager.users.damyr = {
+  home-manager.users.damyr = { pkgs, ... }: {
+    # GNOME dconf settings - migrated from Ansible
     dconf.settings = {
-      "org/gnome/desktop/background" = {
-        picture-uri = "file:///home/damyr/.wallpaper.jpg";
-      };
+      # Desktop interface settings
       "org/gnome/desktop/interface" = {
         clock-show-date = true;
         clock-format = "24h";
         clock-show-seconds = true;
         show-battery-percentage = true;
         gtk-theme = "Adwaita-dark";
+        icon-theme = "Paper";
         color-scheme = "prefer-dark";
       };
+
+      # Window manager preferences
       "org/gnome/desktop/wm/preferences" = {
         theme = "Adwaita-dark";
       };
+
+      # Desktop background
+      "org/gnome/desktop/background" = {
+        picture-uri = "file:///home/damyr/.wallpaper.jpg";
+        picture-uri-dark = "file:///home/damyr/.wallpaper.jpg";
+      };
+
+      # GNOME Shell configuration
       "org/gnome/shell" = {
         enabled-extensions = [
           "horizontal-workspaces@gnome-shell-extensions.gcampax.github.com"
@@ -94,28 +39,27 @@
           "org.gnome.Nautilus.desktop"
         ];
       };
+
+      # User theme extension settings
+      "org/gnome/shell/extensions/user-theme" = {
+        name = "";
+      };
+
+      # Default terminal application
       "org/gnome/desktop/applications/terminal" = {
         exec = "kitty";
       };
+
+      # GNOME Terminal settings
       "org/gnome/terminal/legacy" = {
         menu-accelerator-enabled = true;
       };
+
+      # Nautilus (Files) preferences
       "org/gnome/nautilus/preferences" = {
         search-filter-time-type = "last_modified";
         default-folder-viewer = "icon-view";
       };
     };
-  };
-
-  # Enable CUPS for printing
-  services.printing.enable = true;
-
-  # PipeWire for audio
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
   };
 }

@@ -25,6 +25,8 @@
           ./modules/security.nix
           ./modules/services.nix
           ./modules/system.nix
+          ./modules/kitty.nix
+          ./modules/gnome.nix
 
           home-manager.nixosModules.home-manager
           {
