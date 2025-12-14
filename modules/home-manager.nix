@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
-  home-manager.users.damyr = { pkgs, ... }: {
+  home-manager.users.${username} = { pkgs, ... }: {
     home.stateVersion = "25.11";
   };
 }

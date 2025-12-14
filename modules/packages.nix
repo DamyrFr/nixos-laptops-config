@@ -28,6 +28,11 @@ in
     direnv
     fzf
 
+    # DevOps
+    kubectl
+    kubecolor
+    scaleway-cli
+
     # Network tools
     curl
     wget

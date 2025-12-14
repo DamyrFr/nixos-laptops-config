@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
-  home-manager.users.damyr = { pkgs, ... }: {
+  home-manager.users.${username} = { pkgs, ... }: {
     # Kitty terminal configuration
     programs.kitty = {
       enable = true;

@@ -1,7 +1,73 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
-  home-manager.users.damyr = { pkgs, ... }: {
+  # GNOME-specific system packages
+  environment.systemPackages = with pkgs; [
+    # GNOME utilities
+    gnome-tweaks
+    gnomeExtensions.vitals
+    gnomeExtensions.user-themes
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.forge
+    gnome-boxes
+
+    # Theme
+    paper-icon-theme
+    marble-shell-theme
+
+    # Additional GNOME tools
+    wl-clipboard
+    lm_sensors
+    networkmanagerapplet
+    networkmanager-openvpn
+
+    # GNOME applications
+    gnome-pass-search-provider
+  ];
+
+  # Remove unwanted GNOME applications (games, etc.)
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-music
+    gnome-logs
+    epiphany  # GNOME web browser
+    geary     # Email client
+    totem     # Video player
+    yelp      # Help viewer
+    # GNOME Games
+    atomix
+    hitori
+    iagno
+    gnome-2048
+    tali
+    gnome-mahjongg
+    gnome-mines
+    gnome-nibbles
+    gnome-robots
+    gnome-sudoku
+    gnome-taquin
+    gnome-tetravex
+    quadrapassel
+    swell-foop
+    lightsoff
+  ];
+
+  # Enable GNOME services
+  services.gnome = {
+    gnome-keyring.enable = true;
+  };
+
+  home-manager.users.${username} = { pkgs, ... }: {
+    # Fonts configuration
+    home.packages = with pkgs; [
+      # Nerd Fonts
+      jetbrains-mono
+    ];
+
+    # Wallpaper - copy from source
+    home.file.".wallpaper.jpg" = {
+      source = ./../wallpaper.jpg;
+    };
+
     # GNOME dconf settings - migrated from Ansible
     dconf.settings = {
       # Desktop interface settings
@@ -10,9 +76,9 @@
         clock-format = "24h";
         clock-show-seconds = true;
         show-battery-percentage = true;
-        gtk-theme = "Adwaita-dark";
+        gtk-theme = "Marble-blue-light";
         icon-theme = "Paper";
-        color-scheme = "prefer-dark";
+        color-scheme = "prefer-light";
       };
 
       # Window manager preferences
@@ -59,6 +125,26 @@
       "org/gnome/nautilus/preferences" = {
         search-filter-time-type = "last_modified";
         default-folder-viewer = "icon-view";
+      };
+
+      # Custom keyboard shortcuts
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+        name = "Launch Kitty";
+        command = "kitty";
+        binding = "<Super>t";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        name = "Launch Firefox";
+        command = "firefox";
+        binding = "<Super>f";
       };
     };
   };
