@@ -5,10 +5,11 @@
   environment.systemPackages = with pkgs; [
     # GNOME utilities
     gnome-tweaks
+    gnome-boxes
     gnomeExtensions.vitals
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
-    gnome-boxes
+    gnomeExtensions.tiling-shell
 
     # Theme
     paper-icon-theme
@@ -82,7 +83,7 @@
 
       # Window manager preferences
       "org/gnome/desktop/wm/preferences" = {
-        theme = "Adwaita-dark";
+        theme = "Adwaita-light";
       };
 
       # Desktop background
@@ -99,6 +100,7 @@
           "Vitals@CoreCoding.com"
           "blur-my-shell@aunetx"
           "orge@jmmaranan.com"
+          "tilingshell@ferrarodomenico.com"
         ];
         favorite-apps = [
           "kitty.desktop"
