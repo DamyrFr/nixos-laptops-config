@@ -40,12 +40,34 @@
         ];
       };
       
-      #waays = nixpkgs.lib.nixosSystem {
-      #  system = "x86_64-linux";
-      #  modules = [
-      #    ./hosts/waays/configuration.nix
-      #  ];
-      #};
+      waays = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { 
+          username = "thomas";
+          hostname = "lapwar";
+        };
+        modules = [
+          ./hosts/waays/configuration.nix
+          ./modules/user.nix
+          ./modules/neovim.nix
+          ./modules/packages.nix
+          ./modules/security.nix
+          ./modules/services.nix
+          ./modules/system.nix
+          ./modules/kitty.nix
+          ./modules/gnome.nix
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { 
+              username = "damyr"; 
+            };
+            home-manager.users.damyr = import ./home/home.nix;
+          }
+        ];
+      };
     };
   };
 }
