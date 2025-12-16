@@ -20,14 +20,6 @@
   # VirtualBox guest additions (if needed)
   virtualisation.virtualbox.guest.enable = true;
 
-  # services.tlp = {
-  #   enable = true;
-  #   settings = {
-  #     CPU_SCALING_GOVERNOR_ON_AC = "performance";
-  #     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-  #   };
-  # };
-
   # Enable OpenVPN
   services.openvpn.servers = {
     # Configure your VPN connections here if needed
@@ -42,11 +34,28 @@
 
   # Enable PCSC for smart card support (GPG)
   services.pcscd.enable = true;
+  hardware.gpgSmartcards.enable = true;
 
-  # Firewall configuration
-  #networking.firewall = {
-  #  enable = true;
-  #  allowedTCPPorts = [ ];
-  #  allowedUDPPorts = [ ];
-  #};
+  # Enable automatic system updates
+  system.autoUpgrade = {
+    enable = true;
+    flake = "/home/damyr/nixos-config";
+    flags = [
+      "--update-input" "nixpkgs"
+      "--commit-lock-file"
+    ];
+    dates = "daily";
+    randomizedDelaySec = "45min";
+    allowReboot = false;
+  };
+
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 5d";
+  };
+
+  # Keep only the last 5 generations
+  boot.loader.systemd-boot.configurationLimit = 5;
 }

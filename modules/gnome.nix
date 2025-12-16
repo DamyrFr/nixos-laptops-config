@@ -1,92 +1,107 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, username, ... }:
 
 {
-  # Enable X11
-  services.xserver = {
-    enable = true;
-
-    # Keyboard layout
-    xkb = {
-      layout = "fr";
-      variant = "";
-    };
-  };
-
-  # Enable GNOME Desktop Environment
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  # GNOME packages to install
+  # GNOME-specific system packages
   environment.systemPackages = with pkgs; [
+    # GNOME utilities
     gnome-tweaks
+    gnome-boxes
     gnomeExtensions.vitals
     gnomeExtensions.user-themes
-    chromium
-    gnome-boxes
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.tiling-shell
+
+    # Theme
+    paper-icon-theme
+    marble-shell-theme
+
+    # Additional GNOME tools
     wl-clipboard
     lm_sensors
-    # Paper icon theme and Marble shell theme would need to be packaged or installed manually
+    networkmanagerapplet
+    networkmanager-openvpn
+    gnome-tweaks
+
+    # GNOME applications
+    gnome-pass-search-provider
   ];
 
-  # Exclude unwanted GNOME applications
+  # Remove unwanted GNOME applications (games, etc.)
   environment.gnome.excludePackages = with pkgs; [
-    gnome-tour
     gnome-music
+    gnome-logs
     epiphany  # GNOME web browser
     geary     # Email client
     totem     # Video player
-    # Games
-    gnome-robots
-    gnome-mahjongg
-    gnome-mines
-    gnome-nibbles
-    gnome-taquin
-    gnome-tetravex
-    aisleriot  # Solitaire
+    yelp      # Help viewer
+    # GNOME Games
     atomix
     hitori
     iagno
+    gnome-2048
+    tali
+    gnome-mahjongg
+    gnome-mines
+    gnome-nibbles
+    gnome-robots
+    gnome-sudoku
+    gnome-taquin
+    gnome-tetravex
     quadrapassel
     swell-foop
-    tali
+    lightsoff
   ];
 
-  # Install fonts
-  fonts.packages = with pkgs; [
-    nerd-fonts.hack
-    nerd-fonts.symbols-only
-    nerd-fonts.jetbrains-mono
-  ];
+  # Enable GNOME services
+  services.gnome = {
+    gnome-keyring.enable = true;
+  };
 
-  # GNOME dconf settings (per-user configuration)
-  # These should be set using home-manager for better declarative management
-  # or manually using dconf after first login
-  programs.dconf.enable = true;
+  home-manager.users.${username} = { pkgs, ... }: {
+    # Fonts configuration
+    home.packages = with pkgs; [
+      # Nerd Fonts
+      jetbrains-mono
+    ];
 
-  # Note: For full dconf configuration, consider using home-manager
-  # Here's an example of what the home-manager configuration would look like:
-  #
-  home-manager.users.damyr = {
+    # Wallpaper - copy from source
+    home.file.".wallpaper.jpg" = {
+      source = ./../wallpaper.jpg;
+    };
+
+    # GNOME dconf settings - migrated from Ansible
     dconf.settings = {
-      "org/gnome/desktop/background" = {
-        picture-uri = "file:///home/damyr/.wallpaper.jpg";
-      };
+      # Desktop interface settings
       "org/gnome/desktop/interface" = {
         clock-show-date = true;
         clock-format = "24h";
         clock-show-seconds = true;
         show-battery-percentage = true;
-        gtk-theme = "Adwaita-dark";
-        color-scheme = "prefer-dark";
+        gtk-theme = "Marble-gray-light";
+        icon-theme = "Paper";
+        color-scheme = "prefer-light";
       };
+
+      # Window manager preferences
       "org/gnome/desktop/wm/preferences" = {
-        theme = "Adwaita-dark";
+        theme = "Adwaita-light";
       };
+
+      # Desktop background
+      "org/gnome/desktop/background" = {
+        picture-uri = "file:///home/${username}/.wallpaper.jpg";
+        picture-uri-dark = "file:///home/${username}/.wallpaper.jpg";
+      };
+
+      # GNOME Shell configuration
       "org/gnome/shell" = {
         enabled-extensions = [
           "horizontal-workspaces@gnome-shell-extensions.gcampax.github.com"
           "user-theme@gnome-shell-extensions.gcampax.github.com"
           "Vitals@CoreCoding.com"
+          "blur-my-shell@aunetx"
+          "orge@jmmaranan.com"
+          "tilingshell@ferrarodomenico.com"
         ];
         favorite-apps = [
           "kitty.desktop"
@@ -94,28 +109,47 @@
           "org.gnome.Nautilus.desktop"
         ];
       };
+
+      # User theme extension settings
+      "org/gnome/shell/extensions/user-theme" = {
+        name = "";
+      };
+
+      # Default terminal application
       "org/gnome/desktop/applications/terminal" = {
         exec = "kitty";
       };
+
+      # GNOME Terminal settings
       "org/gnome/terminal/legacy" = {
         menu-accelerator-enabled = true;
       };
+
+      # Nautilus (Files) preferences
       "org/gnome/nautilus/preferences" = {
         search-filter-time-type = "last_modified";
         default-folder-viewer = "icon-view";
       };
+
+      # Custom keyboard shortcuts
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+        name = "Launch Kitty";
+        command = "kitty";
+        binding = "<Super>t";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        name = "Launch Firefox";
+        command = "firefox";
+        binding = "<Super>f";
+      };
     };
-  };
-
-  # Enable CUPS for printing
-  services.printing.enable = true;
-
-  # PipeWire for audio
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
   };
 }
