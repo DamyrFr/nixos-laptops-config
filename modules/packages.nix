@@ -31,6 +31,7 @@ in
     # DevOps
     kubectl
     kubecolor
+    k9s
     scaleway-cli
 
     # Network tools

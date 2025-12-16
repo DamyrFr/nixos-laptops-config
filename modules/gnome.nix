@@ -77,7 +77,7 @@
         clock-format = "24h";
         clock-show-seconds = true;
         show-battery-percentage = true;
-        gtk-theme = "Marble-blue-light";
+        gtk-theme = "Marble-gray-light";
         icon-theme = "Paper";
         color-scheme = "prefer-light";
       };
