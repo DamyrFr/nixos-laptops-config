@@ -34,4 +34,17 @@
 
   # Enable PCSC for smart card support (GPG)
   services.pcscd.enable = true;
+
+  # Enable automatic system updates
+  system.autoUpgrade = {
+    enable = true;
+    flake = "/home/damyr/nixos-config";
+    flags = [
+      "--update-input" "nixpkgs"
+      "--commit-lock-file"
+    ];
+    dates = "daily";
+    randomizedDelaySec = "45min";
+    allowReboot = false;
+  };
 }
