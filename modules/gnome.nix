@@ -65,8 +65,8 @@
     ];
 
     # Wallpaper - copy from source
-    home.file.".wallpaper.jpg" = {
-      source = ./../wallpaper.jpg;
+    home.file.".wallpaper.png" = {
+      source = ./../wallpaper.png;
     };
 
     # GNOME dconf settings - migrated from Ansible
@@ -112,7 +112,7 @@
 
       # User theme extension settings
       "org/gnome/shell/extensions/user-theme" = {
-        name = "";
+        name = "Marble-blue-light";
       };
 
       # Default terminal application
