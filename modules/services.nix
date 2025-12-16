@@ -34,6 +34,7 @@
 
   # Enable PCSC for smart card support (GPG)
   services.pcscd.enable = true;
+  hardware.gpgSmartcards.enable = true;
 
   # Enable automatic system updates
   system.autoUpgrade = {
@@ -47,4 +48,14 @@
     randomizedDelaySec = "45min";
     allowReboot = false;
   };
+
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 5d";
+  };
+
+  # Keep only the last 5 generations
+  boot.loader.systemd-boot.configurationLimit = 5;
 }
