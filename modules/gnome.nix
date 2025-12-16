@@ -20,6 +20,7 @@
     lm_sensors
     networkmanagerapplet
     networkmanager-openvpn
+    gnome-tweaks
 
     # GNOME applications
     gnome-pass-search-provider
