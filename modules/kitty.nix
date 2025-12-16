@@ -27,6 +27,7 @@
         initial_window_width = 640;
         initial_window_height = 400;
         window_padding_width = 4;
+        hide_window_decorations = true;
 
         # Tab bar
         tab_bar_style = "powerline";

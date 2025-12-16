@@ -8,7 +8,6 @@
     gnomeExtensions.vitals
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
-    gnomeExtensions.forge
     gnome-boxes
 
     # Theme
@@ -88,8 +87,8 @@
 
       # Desktop background
       "org/gnome/desktop/background" = {
-        picture-uri = "file:///home/damyr/.wallpaper.jpg";
-        picture-uri-dark = "file:///home/damyr/.wallpaper.jpg";
+        picture-uri = "file:///home/${username}/.wallpaper.jpg";
+        picture-uri-dark = "file:///home/${username}/.wallpaper.jpg";
       };
 
       # GNOME Shell configuration
@@ -98,6 +97,8 @@
           "horizontal-workspaces@gnome-shell-extensions.gcampax.github.com"
           "user-theme@gnome-shell-extensions.gcampax.github.com"
           "Vitals@CoreCoding.com"
+          "blur-my-shell@aunetx"
+          "orge@jmmaranan.com"
         ];
         favorite-apps = [
           "kitty.desktop"
