@@ -62,9 +62,9 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { 
-              username = "damyr"; 
+              username = "thomas"; 
             };
-            home-manager.users.damyr = import ./home/home.nix;
+            home-manager.users.thomas = import ./home/home.nix;
           }
         ];
       };
