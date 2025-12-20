@@ -65,8 +65,13 @@
     ];
 
     # Wallpaper - copy from source
-    home.file.".wallpaper.png" = {
-      source = ./../wallpaper.png;
+    home.file.".wallpaper.jpg" = {
+      source = ./../wallpaper.jpg;
+    };
+
+    # Profile picture
+    home.file.".face" = {
+      source = ./../Moi-2024.jpg;
     };
 
     # GNOME dconf settings - migrated from Ansible

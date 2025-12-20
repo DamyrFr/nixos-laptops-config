@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager }: {
+  outputs = { self, nixpkgs, home-manager, disko }: {
     nixosConfigurations = {
       ghost = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -42,12 +46,14 @@
       
       waays = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { 
+        specialArgs = {
           username = "thomas";
           hostname = "lapwar";
         };
         modules = [
           ./hosts/waays/configuration.nix
+          ./hosts/waays/disko.nix
+          disko.nixosModules.disko
           ./modules/user.nix
           ./modules/neovim.nix
           ./modules/packages.nix
@@ -61,8 +67,8 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { 
-              username = "thomas"; 
+            home-manager.extraSpecialArgs = {
+              username = "thomas";
             };
             home-manager.users.thomas = import ./home/home.nix;
           }

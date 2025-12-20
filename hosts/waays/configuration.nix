@@ -19,8 +19,22 @@
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
 
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "fr_FR.UTF-8";
+    LC_IDENTIFICATION = "fr_FR.UTF-8";
+    LC_MEASUREMENT = "fr_FR.UTF-8";
+    LC_MONETARY = "fr_FR.UTF-8";
+    LC_NAME = "fr_FR.UTF-8";
+    LC_NUMERIC = "fr_FR.UTF-8";
+    LC_PAPER = "fr_FR.UTF-8";
+    LC_TELEPHONE = "fr_FR.UTF-8";
+    LC_TIME = "fr_FR.UTF-8";
+  };
+
   # Set your time zone.
-  # time.timeZone = "Europe/Amsterdam";
+  time.timeZone = "Europe/Paris";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -42,10 +56,15 @@
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
   
-
+  # Configure keymap in X11
+  services.xserver.xkb = {
+    layout = "fr";
+    variant = "azerty";
+  };
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
   # services.xserver.xkb.options = "eurosign:e,caps:escape";
+  console.keyMap = "fr";
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;

@@ -1,8 +1,8 @@
-{ config, pkgs, ... }:
+{ config, pkgs, hostname, ... }:
 
 {
   # Hostname
-  networking.hostName = "ghost";
+  networking.hostName = "${hostname}";
 
   # Timezone
   time.timeZone = "Europe/Paris";
