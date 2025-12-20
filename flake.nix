@@ -39,7 +39,7 @@
             home-manager.extraSpecialArgs = { 
               username = "damyr"; 
             };
-            home-manager.users.damyr = import ./home/home.nix;
+            home-manager.users.damyr = import ./modules/home.nix;
           }
         ];
       };
@@ -70,7 +70,7 @@
             home-manager.extraSpecialArgs = {
               username = "thomas";
             };
-            home-manager.users.thomas = import ./home/home.nix;
+            home-manager.users.thomas = import ./modules/home.nix;
           }
         ];
       };

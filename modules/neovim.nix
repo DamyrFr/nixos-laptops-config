@@ -1,30 +1,27 @@
 { config, pkgs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    # Neovim and dependencies
-    neovim
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+  };
 
-    # LSP servers and tools commonly used with Neovim
-    pyright
-    nodePackages.typescript-language-server
-    nodePackages.yaml-language-server
-    lua-language-server
-    nil  # Nix LSP
-    terraform-ls
+  home.activation.cloneNeovimConfig = config.lib.dag.entryAfter ["writeBoundary"] ''
+    NVIM_DIR="$HOME/.config/nvim"
 
-    # Clipboard support for Neovim
-    xclip
-    wl-clipboard
+    if [ ! -d "$NVIM_DIR" ]; then
+      echo "Cloning neovim config..."
+      ${pkgs.git}/bin/git clone https://github.com/DamyrFr/neovim-config "$NVIM_DIR"
+    else
+      echo "Neovim config already exists, pulling latest..."
+      cd "$NVIM_DIR" && ${pkgs.git}/bin/git pull
+    fi
+  '';
 
-    # Build tools for Neovim plugins
-    gcc
-    gnumake
-    unzip
-
-    # Additional tools for Neovim
-    ripgrep  # For telescope
-    fd       # For telescope
-    tree-sitter
+  home.packages = with pkgs; [
+    ripgrep
+    fd
   ];
 }
