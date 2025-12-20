@@ -8,17 +8,29 @@
     vimAlias = true;
   };
 
-  home.activation.cloneNeovimConfig = config.lib.dag.entryAfter ["writeBoundary"] ''
-    NVIM_DIR="$HOME/.config/nvim"
+  # Use a systemd service to clone/update neovim config
+  systemd.user.services.neovim-config-sync = {
+    Unit = {
+      Description = "Clone or update neovim configuration";
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "sync-neovim-config" ''
+        NVIM_DIR="$HOME/.config/nvim"
 
-    if [ ! -d "$NVIM_DIR" ]; then
-      echo "Cloning neovim config..."
-      ${pkgs.git}/bin/git clone https://github.com/DamyrFr/neovim-config "$NVIM_DIR"
-    else
-      echo "Neovim config already exists, pulling latest..."
-      cd "$NVIM_DIR" && ${pkgs.git}/bin/git pull
-    fi
-  '';
+        if [ ! -d "$NVIM_DIR" ]; then
+          echo "Cloning neovim config..."
+          ${pkgs.git}/bin/git clone https://github.com/DamyrFr/neovim-config "$NVIM_DIR"
+        else
+          echo "Neovim config already exists, pulling latest..."
+          cd "$NVIM_DIR" && ${pkgs.git}/bin/git pull
+        fi
+      '';
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
 
   home.packages = with pkgs; [
     ripgrep

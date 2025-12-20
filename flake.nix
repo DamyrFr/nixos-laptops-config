@@ -55,7 +55,6 @@
           ./hosts/waays/disko.nix
           disko.nixosModules.disko
           ./modules/user.nix
-          ./modules/neovim.nix
           ./modules/packages.nix
           ./modules/security.nix
           ./modules/services.nix
