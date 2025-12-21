@@ -6,6 +6,7 @@
       mattermost-desktop
       framework-tool
       framework-tool-tui
+      crush
     ];
   };
 }

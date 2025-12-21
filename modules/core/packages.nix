@@ -53,6 +53,7 @@ in
     ncdu
     strace
     neofetch
+    tree
 
     # Search and text processing
     ripgrep
