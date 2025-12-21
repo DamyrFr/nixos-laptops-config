@@ -6,6 +6,8 @@ Personal NixOS configuration using flakes and home-manager.
 
 This repository contains declarative NixOS configurations for multiple machines, organized into modular components for easy maintenance and reusability.
 
+![Gnome desktop](./img/screen-demo.png)
+
 ## Machines
 
 - **ghost** - Desktop system (user: damyr)
