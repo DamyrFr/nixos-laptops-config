@@ -23,23 +23,18 @@
         };
         modules = [
           ./hosts/ghost/configuration.nix
-          ./modules/user.nix
-          ./modules/neovim.nix
-          ./modules/packages.nix
-          ./modules/security.nix
-          ./modules/services.nix
-          ./modules/system.nix
-          ./modules/kitty.nix
-          ./modules/gnome.nix
+          ./modules/core
+          ./modules/desktop
+          ./modules/home
 
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { 
-              username = "damyr"; 
+            home-manager.extraSpecialArgs = {
+              username = "damyr";
             };
-            home-manager.users.damyr = import ./modules/home.nix;
+            home-manager.users.damyr = import ./modules/home/home.nix;
           }
         ];
       };
@@ -54,14 +49,10 @@
           ./hosts/waays/configuration.nix
           ./hosts/waays/disko.nix
           disko.nixosModules.disko
-          ./modules/user.nix
-          ./modules/packages.nix
-          ./modules/security.nix
-          ./modules/services.nix
-          ./modules/system.nix
-          ./modules/kitty.nix
-          ./modules/gnome.nix
-          ./modules/pro.nix
+          ./modules/core
+          ./modules/desktop
+          ./modules/home
+          ./modules/pro
 
           home-manager.nixosModules.home-manager
           {
@@ -70,7 +61,7 @@
             home-manager.extraSpecialArgs = {
               username = "thomas";
             };
-            home-manager.users.thomas = import ./modules/home.nix;
+            home-manager.users.thomas = import ./modules/home/home.nix;
           }
         ];
       };
