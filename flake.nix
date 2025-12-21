@@ -61,6 +61,7 @@
           ./modules/system.nix
           ./modules/kitty.nix
           ./modules/gnome.nix
+          ./modules/pro.nix
 
           home-manager.nixosModules.home-manager
           {
