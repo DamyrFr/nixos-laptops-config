@@ -44,6 +44,7 @@
 
         # Clipboard
         clipboard_control = "write-clipboard write-primary";
+        copy_on_select = "yes";
 
         # Advanced
         allow_remote_control = true;
