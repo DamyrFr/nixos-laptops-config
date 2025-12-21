@@ -30,4 +30,8 @@
 
   # Console keymap
   console.keyMap = "fr";
+
+  # Nix garbage collection
+  nix.gc.automatic = true;
+  nix.gc.options = "--delete-older-than 7d";
 }
