@@ -44,7 +44,7 @@
         ];
       };
       
-      waays = nixpkgs.lib.nixosSystem {
+      lapwar = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           username = "thomas";
