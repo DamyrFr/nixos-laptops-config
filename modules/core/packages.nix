@@ -47,6 +47,7 @@ in
     fping
     openvpn
     testssl
+    tailscale
 
     # System utilities
     htop

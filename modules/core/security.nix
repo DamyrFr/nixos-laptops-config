@@ -33,7 +33,10 @@
   # AppArmor security framework
   security.apparmor = {
     enable = true;
-    packages = [ pkgs.apparmor-profiles ];
+    packages = with pkgs; [
+      apparmor-profiles
+      apparmor-utils
+    ];
   };
 
   # Enable rtkit for PipeWire

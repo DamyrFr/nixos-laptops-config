@@ -10,6 +10,7 @@
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
     gnomeExtensions.tiling-shell
+    gnomeExtensions.tailscale-qs
 
     # Theme
     paper-icon-theme
@@ -66,12 +67,12 @@
 
     # Wallpaper - copy from source
     home.file.".wallpaper.jpg" = {
-      source = ./../../wallpaper.jpg;
+      source = ./../../img/wallpaper.jpg;
     };
 
     # Profile picture
     home.file.".face" = {
-      source = ./../../Moi-2024.jpg;
+      source = ./../../img/Moi-2024.jpg;
     };
 
     # GNOME dconf settings - migrated from Ansible

@@ -36,6 +36,9 @@
   services.pcscd.enable = true;
   hardware.gpgSmartcards.enable = true;
 
+  # Enable Tailscale
+  services.tailscale.enable = true;
+
   # Enable automatic system updates
   system.autoUpgrade = {
     enable = true;
@@ -51,9 +54,7 @@
 
   # Automatic garbage collection
   nix.gc = {
-    automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 5d";
   };
 
   # Keep only the last 5 generations
