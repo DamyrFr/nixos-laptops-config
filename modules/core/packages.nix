@@ -60,6 +60,7 @@ in
     ripgrep
     ack
     jq
+    yq
     silver-searcher
 
     # Development tools
