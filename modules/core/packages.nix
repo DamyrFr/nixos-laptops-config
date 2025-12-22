@@ -27,6 +27,7 @@ in
     zellij
     direnv
     fzf
+    vhs
 
     # DevOps
     kubectl
