@@ -7,6 +7,8 @@
       framework-tool
       framework-tool-tui
       crush
+      velero
+      vcluster
     ];
   };
 }
