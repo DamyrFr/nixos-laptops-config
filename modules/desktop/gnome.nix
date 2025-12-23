@@ -11,7 +11,7 @@
     gnomeExtensions.blur-my-shell
     gnomeExtensions.tiling-shell
     gnomeExtensions.tailscale-qs
-    gnome-shell-extension-pop-shell
+    gnomeExtensions.pop-shell
 
     # Theme
     paper-icon-theme
