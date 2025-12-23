@@ -4,6 +4,7 @@
   imports = [
     ./neovim.nix
     ./zellij.nix
+#    ../desktop/hyprland.nix
   ];
 
   home.username = username;

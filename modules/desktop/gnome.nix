@@ -11,6 +11,7 @@
     gnomeExtensions.blur-my-shell
     gnomeExtensions.tiling-shell
     gnomeExtensions.tailscale-qs
+    gnome-shell-extension-pop-shell
 
     # Theme
     paper-icon-theme
@@ -107,7 +108,8 @@
           "Vitals@CoreCoding.com"
           "blur-my-shell@aunetx"
           "orge@jmmaranan.com"
-          "tilingshell@ferrarodomenico.com"
+          #"tilingshell@ferrarodomenico.com"
+          "pop-shell@system76.com"
         ];
         favorite-apps = [
           "kitty.desktop"

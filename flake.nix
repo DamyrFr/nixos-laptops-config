@@ -50,7 +50,7 @@
           ./hosts/waays/disko.nix
           disko.nixosModules.disko
           ./modules/core
-          ./modules/desktop/hyprland.nix
+          ./modules/desktop
           ./modules/home
           ./modules/pro
 
