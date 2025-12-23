@@ -176,9 +176,9 @@ in
         position = "top";
         height = 34;
         
-        modules-left = [ "hyprland/workspaces" "hyprland/window" ];
-        modules-center = [ "clock" ];
-        modules-right = [ "pulseaudio" "network" "battery" "tray" ];
+        modules-left = [ "hyprland/workspaces" "clock"];
+        modules-center = [ "hyprland/window" ];
+        modules-right = [ "pulseaudio" "pulseaudio-microphone" "bluetooth" "network" "temperature" "battery" "tray" ];
         
         "hyprland/workspaces" = {
           format = "{name}";
@@ -216,27 +216,75 @@ in
         };
         
         battery = {
-          format = "{capacity}% {icon}";
-          format-icons = ["" "" "" "" ""];
-          format-charging = "{capacity}% ";
-          format-plugged = "{capacity}% ";
+          format = "{icon} {capacity}%";
+          format-icons = ["󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹"];
+          format-charging = " {capacity}% ";
+          format-plugged = " {capacity}% ";
+          states = {
+            warning = 30;
+            critical = 15;
+          };
         };
         
         network = {
-          format-wifi = "{essid} ";
-          format-ethernet = "{ipaddr} ";
-          format-disconnected = "Disconnected ⚠";
-          tooltip-format = "{ifname}: {ipaddr}";
+            on-click = "kitty nmtui";
+            format-icons = [" 󰤯" " 󰤟" " 󰤢" " 󰤥" " 󰤨"];
+            format = "{icon}";
+            format-wifi = "{icon}";
+            format-ethernet = "󰀂 ";
+            tooltip-format-wifi = "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}";
+            tooltip-format-ethernet = "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}";
+            tooltip-format-disconnected = "Disconnected";
+            interval =  3;
+            nospacing = 1;
+            tooltip-format = "{essid} - {ifname} via {gwaddr}";
+            format-linked = "{ifname} (No IP)";
+            format-disconnected = " 󰤠 ";
         };
         
         pulseaudio = {
           format = "{volume}% {icon}";
           format-muted = "";
           format-icons = {
-            default = ["" "" ""];
+               headphone = "";
+               hands-free = "";
+               headset = "";
+               phone = "";
+               portable = "";
+               default = ["" "" ""];
           };
           on-click = "pavucontrol";
         };
+
+        pulseaudio-microphone = {
+          format = "{format_source}";
+          format-source = "  ";
+          format-source-muted = " ";
+          on-click = "~/.config/hypr/scripts/mute_mic_script.sh";
+          on-click-right = "pavucontrol";
+          on-scroll-up = "pamixer --default-source -i 5";
+          on-scroll-down = "pamixer --default-source -d 5";
+          scroll-step = 5;
+        };
+
+        bluetooth = {
+            format = "";
+            format-connected = " {device_alias}";
+            format-connected-battery = " {device_alias} {device_battery_percentage}%";
+            tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+            tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+            tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+            tooltip-format-enumerate-connected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+            on-click = "rfkill toggle bluetooth";
+        };
+
+        temperature = {
+            thermal-zone = 0;
+            format = "  {temperatureC}°C";
+            critical-threshold = 70;
+            format-critical = " {temperatureC}°C";
+        }; 
+
         
         tray = {
           spacing = 10;
@@ -290,12 +338,16 @@ in
         margin: 5px 0;
       }
 
+      #battery {
+        color: #${catppuccin.green};
+      }
+
       #battery.charging {
         color: #${catppuccin.green};
       }
 
       #battery.warning:not(.charging) {
-        color: #${catppuccin.peach};
+        color: #${catppuccin.yellow};
       }
 
       #battery.critical:not(.charging) {
@@ -550,5 +602,9 @@ in
     playerctl
     hyprpicker
     wlogout
+    pavucontrol
+    pamixer
+    iwgtk
+    brightnessctl
   ];
 }
