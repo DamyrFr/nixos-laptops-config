@@ -16,7 +16,10 @@
 
     # Theme
     paper-icon-theme
-    marble-shell-theme
+    (marble-shell-theme.override {
+      colors = ["yellow"];
+      additionalInstallationTweaks = [ "-O" ];
+    })
 
     # Additional GNOME tools
     wl-clipboard
@@ -85,7 +88,7 @@
         clock-format = "24h";
         clock-show-seconds = true;
         show-battery-percentage = true;
-        gtk-theme = "Marble-gray-light";
+        gtk-theme = "Marble-yellow-light";
         icon-theme = "Paper";
         cursor = "Paper";
         color-scheme = "prefer-light";
