@@ -9,7 +9,8 @@
     gnomeExtensions.vitals
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
-    gnomeExtensions.tiling-shell
+    gnomeExtensions.weather-oclock
+    gnome-shell-extension-quick-settings-tweaker
     gnomeExtensions.tailscale-qs
     gnomeExtensions.pop-shell
 
@@ -108,7 +109,8 @@
           "Vitals@CoreCoding.com"
           "blur-my-shell@aunetx"
           "orge@jmmaranan.com"
-          #"tilingshell@ferrarodomenico.com"
+          "quick-settings-tweaks@qwreey"
+          "weatheroclock@CleoMenezesJr.github.io"
           "pop-shell@system76.com"
         ];
         favorite-apps = [
