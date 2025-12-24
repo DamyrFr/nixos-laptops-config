@@ -10,7 +10,7 @@
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
     gnomeExtensions.weather-oclock
-    gnome-shell-extension-quick-settings-tweaker
+    gnomeExtensions.quick-settings-tweaker
     gnomeExtensions.tailscale-qs
     gnomeExtensions.pop-shell
 
