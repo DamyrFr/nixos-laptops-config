@@ -87,6 +87,7 @@
         show-battery-percentage = true;
         gtk-theme = "Marble-gray-light";
         icon-theme = "Paper";
+        cursor = "Paper";
         color-scheme = "prefer-light";
       };
 

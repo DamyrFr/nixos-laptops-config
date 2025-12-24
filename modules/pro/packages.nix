@@ -9,6 +9,8 @@
       crush
       velero
       vcluster
+      awscli2
+      google-cloud-sdk
     ];
   };
 }
