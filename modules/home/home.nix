@@ -217,6 +217,12 @@
       package = {
         disabled = true;
       };
+
+      env_var.CURRENT_PROJECT = {
+        symbol = "🔬 ";
+        format = "[$symbol$env_value]($style) ";
+        style = "bold purple";
+      };
     };
   };
 
