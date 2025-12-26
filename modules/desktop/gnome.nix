@@ -23,6 +23,7 @@
 
     # Additional GNOME tools
     wl-clipboard
+    xclip
     lm_sensors
     networkmanagerapplet
     networkmanager-openvpn
