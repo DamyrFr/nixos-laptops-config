@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,13 +14,17 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, disko }: {
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, disko }: {
     nixosConfigurations = {
       ghost = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { 
+        specialArgs = {
           username = "damyr";
           hostname = "ghost";
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
         };
         modules = [
           ./hosts/ghost/configuration.nix
@@ -44,6 +49,10 @@
         specialArgs = {
           username = "thomas";
           hostname = "lapwar";
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
         };
         modules = [
           ./hosts/waays/configuration.nix

@@ -1,4 +1,4 @@
-{ config, pkgs, username, ... }:
+{ config, pkgs, pkgs-unstable, username, ... }:
 
 {
   home-manager.users.${username} = { pkgs, ... }: {
@@ -6,7 +6,7 @@
       mattermost-desktop
       framework-tool
       framework-tool-tui
-      crush
+      pkgs-unstable.crush
       velero
       vcluster
       awscli2
