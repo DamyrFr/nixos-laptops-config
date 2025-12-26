@@ -33,6 +33,7 @@ in
     kubectl
     kubecolor
     k9s
+    fluxcd
     scaleway-cli
 
     # Network tools
