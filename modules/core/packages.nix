@@ -62,6 +62,7 @@ in
     ack
     jq
     yq
+    xq-xml
     silver-searcher
 
     # Development tools

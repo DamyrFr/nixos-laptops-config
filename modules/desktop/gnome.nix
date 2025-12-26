@@ -31,6 +31,7 @@
 
     # GNOME applications
     gnome-pass-search-provider
+    pinentry-gtk2
   ];
 
   # Remove unwanted GNOME applications (games, etc.)
@@ -127,7 +128,7 @@
 
       # User theme extension settings
       "org/gnome/shell/extensions/user-theme" = {
-        name = "Marble-blue-light";
+        name = "Marble-yellow-light";
       };
 
       # Default terminal application
