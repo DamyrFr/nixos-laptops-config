@@ -6,7 +6,7 @@
       initExtra = ''
         # Host completion configuration
         zstyle ':completion:*:hosts' hosts $hosts
-        zstyle ':completion:*:hosts' hosts `cat ~/.ssh_hosts_list`
+        zstyle ':completion:*:hosts' hosts `cat ~/.cache/xml_hosts_cache`
 
         # Load extended configuration if it exists
         [[ -f ~/.zshrc_extend ]] && source ~/.zshrc_extend
