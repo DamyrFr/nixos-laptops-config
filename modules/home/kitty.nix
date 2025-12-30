@@ -10,6 +10,9 @@
         size = 11;
       };
       settings = {
+        # Terminal type - use xterm-256color for better SSH compatibility
+        term = "xterm-256color";
+
         # Cursor
         cursor_shape = "block";
         cursor_blink_interval = 0;
@@ -48,7 +51,8 @@
 
         # Advanced
         allow_remote_control = true;
-        shell_integration = "enabled";
+        # Disable shell integration to avoid conflicts with Zellij
+        shell_integration = "no-cursor";
 
         # Light Theme Colors (One Light inspired)
         foreground = "#383a42";
@@ -90,9 +94,9 @@
         color6 = "#0997b3";
         color14 = "#56b6c2";
 
-        # White
-        color7 = "#fafafa";
-        color15 = "#ffffff";
+        # White (adjusted for light background - using gray)
+        color7 = "#a0a1a7";
+        color15 = "#6c6f7e";
 
         # Tab bar colors
         active_tab_foreground = "#383a42";
