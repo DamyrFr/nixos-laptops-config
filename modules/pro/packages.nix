@@ -11,6 +11,8 @@
       vcluster
       awscli2
       google-cloud-sdk
+      _1password-gui
+      _1password-cli
     ];
   };
 }
