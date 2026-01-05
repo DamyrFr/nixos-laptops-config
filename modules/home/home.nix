@@ -223,6 +223,14 @@
         format = "[$symbol$env_value]($style) ";
         style = "bold purple";
       };
+
+      kubernetes = {
+        disabled = false;
+        symbol = "⛵ ";
+        format = "[$symbol$context( \\($namespace\\))]($style) ";
+        style = "cyan bold";
+        context_aliases = {};
+      };
     };
   };
 
