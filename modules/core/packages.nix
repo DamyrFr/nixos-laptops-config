@@ -28,10 +28,12 @@ in
     direnv
     fzf
     vhs
+    sops
 
     # DevOps
     kubectl
     kubecolor
+    kubectx
     k9s
     fluxcd
     scaleway-cli
