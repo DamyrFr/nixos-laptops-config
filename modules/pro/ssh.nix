@@ -3,7 +3,7 @@
 {
   home-manager.users.${username} = { pkgs, ... }: {
     programs.zsh = {
-      initExtra = ''
+      initContent = ''
         # Use compatible TERM for SSH
         export TERM=xterm-256color
 
