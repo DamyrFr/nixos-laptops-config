@@ -96,6 +96,11 @@
         color-scheme = "prefer-light";
       };
 
+      # Region & Language - Use French formats
+      "org/gnome/system/locale" = {
+        region = "fr_FR.UTF-8";
+      };
+
       # Window manager preferences
       "org/gnome/desktop/wm/preferences" = {
         theme = "Adwaita-light";
