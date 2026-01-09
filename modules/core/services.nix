@@ -17,8 +17,8 @@
     defaultNetwork.settings.dns_enabled = true;
   };
 
-  # VirtualBox guest additions (if needed)
-  virtualisation.virtualbox.guest.enable = true;
+  # VirtualBox guest additions (only enable on VMs, not physical machines)
+  # Set virtualisation.virtualbox.guest.enable = true in host config if needed
 
   # Enable OpenVPN
   services.openvpn.servers = {
