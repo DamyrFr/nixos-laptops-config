@@ -91,6 +91,7 @@ in
     buildah
 
     # Cloud and infrastructure tools
+    opentofu
     terraform
     terraform-ls
     terragrunt
