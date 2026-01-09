@@ -43,9 +43,10 @@ This repository contains declarative NixOS configurations for multiple machines,
     │   ├── kitty.nix
     │   ├── neovim.nix
     │   └── zellij.nix
-    └── profiles/             # Machine-specific profiles
+    └── pro/                  # Professional laptop configuration
         ├── default.nix
-        └── packages.nix      # Pro laptop packages
+        ├── packages.nix      # Pro laptop packages
+        └── ssh.nix           # SSH configuration
 ```
 
 ## Module Organization
@@ -70,9 +71,10 @@ User-level configurations via home-manager:
 - **neovim.nix** - Neovim editor
 - **zellij.nix** - Zellij terminal multiplexer
 
-### Profile Modules
-Machine-specific configurations:
-- **pro** - Professional laptop packages (Framework laptop tools, Mattermost, etc.)
+### Pro Modules
+Professional laptop configurations (lapwar only):
+- **packages.nix** - Professional tools (Framework laptop utilities, Mattermost, etc.)
+- **ssh.nix** - SSH configuration
 
 ## Installation
 
