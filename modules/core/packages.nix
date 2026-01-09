@@ -91,8 +91,6 @@ in
     buildah
 
     # Cloud and infrastructure tools
-    kubectl
-    kubecolor
     terraform
     terraform-ls
     terragrunt
