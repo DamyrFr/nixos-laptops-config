@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
   # Enable and configure libvirtd for virt-manager
@@ -42,7 +42,7 @@
   # Enable automatic system updates
   system.autoUpgrade = {
     enable = true;
-    flake = "/home/damyr/nixos-config";
+    flake = "/home/${username}/nixos-config";
     flags = [
       "--update-input" "nixpkgs"
       "--commit-lock-file"
