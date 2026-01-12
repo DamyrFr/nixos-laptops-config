@@ -157,6 +157,7 @@
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
         ];
       };
 
@@ -170,6 +171,12 @@
         name = "Launch Firefox";
         command = "firefox";
         binding = "<Super>f";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+        name = "Toggle Microphone Mute";
+        command = "pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        binding = "<Control>m";
       };
     };
   };
