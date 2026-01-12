@@ -34,6 +34,7 @@ in
     kubectl
     kubecolor
     kubectx
+    kubent
     k9s
     fluxcd
     scaleway-cli
