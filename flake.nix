@@ -76,6 +76,37 @@
           }
         ];
       };
+
+      dust = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          username = "damyr";
+          hostname = "dust";
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
+        };
+        modules = [
+          ./hosts/dust/configuration.nix
+          ./hosts/dust/disko.nix
+          disko.nixosModules.disko
+          ./modules/core
+          ./modules/desktop
+          ./modules/home
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = {
+              username = "thomas";
+            };
+            home-manager.users.thomas = import ./modules/home/home.nix;
+          }
+        ];
+      };
     };
   };
 }
