@@ -71,6 +71,7 @@ in
 
     # Development tools
     git
+    git-crypt
     pre-commit
     gnumake
     gcc
@@ -85,6 +86,7 @@ in
     nodePackages.yarn
     ruby
     go
+    php83
 
     # Container tools
     podman
@@ -100,7 +102,7 @@ in
     google-cloud-sdk
 
     # Kubernetes/DevOps
-    helm
+    kubernetes-helm
     opentofu
 
     # Security tools
