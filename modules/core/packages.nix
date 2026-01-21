@@ -29,6 +29,7 @@ in
     fzf
     vhs
     sops
+    wirelesstools
 
     # DevOps
     kubectl
