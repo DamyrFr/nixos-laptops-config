@@ -1,157 +1,41 @@
 { config, pkgs, ... }:
 
-let
-  # Override os-service-types to add missing typing-extensions dependency
-  python3Packages = pkgs.python311Packages.override {
-    overrides = self: super: {
-      os-service-types = super.os-service-types.overridePythonAttrs (old: {
-        propagatedBuildInputs = (old.propagatedBuildInputs or []) ++ [ self.typing-extensions ];
-      });
-    };
-  };
-in
 {
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # System-wide packages
+  # System-wide packages (minimal set for root and system operations)
   environment.systemPackages = with pkgs; [
-    # Editors
+    # Minimal editor for root emergencies
     vim
-    neovim
 
-    # Shell tools
-    zsh
-    tmux
-    starship
-    zellij
-    direnv
-    fzf
-    vhs
-    sops
-    wirelesstools
-
-    # DevOps
-    kubectl
-    kubecolor
-    kubectx
-    kubent
-    k9s
-    fluxcd
-    scaleway-cli
-
-    # Network tools
+    # Basic system utilities
     curl
     wget
     rsync
+    wirelesstools
+
+    # Network diagnostics (system-level)
     tcpdump
     dnsutils
     traceroute
-    nmap
     net-tools
-    ipcalc
-    fping
-    openvpn
-    testssl
     tailscale
 
-    # System utilities
+    # System monitoring
     htop
-    ncdu
     strace
-    neofetch
-    tree
 
-    # Search and text processing
-    ripgrep
-    ack
-    jq
-    yq
-    xq-xml
-    silver-searcher
-
-    # Development tools
-    git
-    git-crypt
-    pre-commit
-    gnumake
-    gcc
-    automake
-    autoconf
-
-    # Programming languages
-    python3
-    python311Packages.pip
-    nodejs
-    nodePackages.npm
-    nodePackages.yarn
-    ruby
-    go
-    php83
-
-    # Container tools
-    podman
-    podman-compose
-    buildah
-
-    # Cloud and infrastructure tools
-    opentofu
-    terraform
-    terraform-ls
-    terragrunt
-    packer
-    google-cloud-sdk
-
-    # Kubernetes/DevOps
-    kubernetes-helm
-    opentofu
-
-    # Security tools
+    # Security (system-level)
     gnupg
-    pass
     clamav
     apparmor-profiles
     apparmor-utils
 
-    # Virtualization
-    virt-manager
-    vagrant
-
-    # Multimedia
-    vlc
-    spotify
-
-    # Terminal emulator
-    kitty
-
-    # Latex
-    texlive.combined.scheme-full
-    texlivePackages.latexmk
-
-    # Task management
-    taskwarrior2
-
-    # OpenStack client
-    python3Packages.python-openstackclient
-
-    # Other utilities
-    cups
-    tfsec
-    terraform-docs
-
-    # Build tools and compilers
-    cmake
-    pkg-config
-
-    # Python development
-    python311
-    python311Packages.virtualenv
-
-    # Ruby development
-    bundler
-
-    # AI tools
-    claude-code
+    # Build essentials (system-level)
+    git
+    gnumake
+    gcc
   ];
 
   # Enable GPG agent

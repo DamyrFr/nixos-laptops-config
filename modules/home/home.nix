@@ -1,5 +1,15 @@
 { config, pkgs, username, ... }:
 
+let
+  # Override os-service-types to add missing typing-extensions dependency
+  python3Packages = pkgs.python311Packages.override {
+    overrides = self: super: {
+      os-service-types = super.os-service-types.overridePythonAttrs (old: {
+        propagatedBuildInputs = (old.propagatedBuildInputs or []) ++ [ self.typing-extensions ];
+      });
+    };
+  };
+in
 {
   imports = [
     ./neovim.nix
@@ -14,9 +24,111 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    fzf
-    fastfetch
+    # Fonts
     nerd-fonts.jetbrains-mono
+
+    # Shell tools
+    zsh
+    tmux
+    starship
+    zellij
+    direnv
+    fzf
+    vhs
+    sops
+    fastfetch
+
+    # DevOps
+    kubectl
+    kubecolor
+    kubectx
+    kubent
+    k9s
+    fluxcd
+    scaleway-cli
+
+    # Network tools
+    nmap
+    ipcalc
+    fping
+    openvpn
+    testssl
+
+    # System utilities
+    ncdu
+    neofetch
+    tree
+
+    # Search and text processing
+    ripgrep
+    ack
+    jq
+    yq
+    silver-searcher
+
+    # Development tools
+    git-crypt
+    pre-commit
+    automake
+    autoconf
+
+    # Programming languages
+    python311
+    python311Packages.pip
+    nodePackages.npm
+    nodePackages.yarn
+    ruby
+    go
+    php83
+
+    # Container tools
+    podman
+    podman-compose
+    buildah
+
+    # Cloud and infrastructure tools
+    opentofu
+    terraform
+    terraform-ls
+    terragrunt
+    packer
+    google-cloud-sdk
+    kubernetes-helm
+    tfsec
+    terraform-docs
+
+    # Security tools
+    pass
+
+    # Virtualization
+    virt-manager
+    vagrant
+
+    # Multimedia
+    vlc
+    spotify
+
+    # Terminal emulator
+    kitty
+
+    # Latex
+    texlive.combined.scheme-full
+    texlivePackages.latexmk
+
+    # Task management
+    taskwarrior2
+
+    # OpenStack client
+    python3Packages.python-openstackclient
+
+    # Other utilities
+    cups
+    cmake
+    pkg-config
+    python311Packages.virtualenv
+
+    # AI tools
+    claude-code
   ];
 
   # Zsh configuration
