@@ -101,9 +101,9 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = {
-              username = "thomas";
+              username = "damyr";
             };
-            home-manager.users.thomas = import ./modules/home/home.nix;
+            home-manager.users.damyr = import ./modules/home/home.nix;
           }
         ];
       };
