@@ -170,7 +170,7 @@ in
       user = {
         name = "Thomas";
         email = "thomas@anvir.fr";
-        signingkey = "~/.ssh/id_ed25519.pub";
+        #signingkey = "~/.ssh/id_ed25519.pub";
       };
       gpg.format = "ssh";
       core = {
@@ -178,8 +178,8 @@ in
         whitespace = "fix,-indent-with-non-tab,trailing-space,cr-at-eol";
         excludesfile = "~/.gitignore";
       };
-      commit.gpgsign = true;
-      tag.gpgsign = true;
+      commit.gpgsign = false;
+      tag.gpgsign = false;
       web.browser = "firefox";
       color = {
         ui = "auto";
