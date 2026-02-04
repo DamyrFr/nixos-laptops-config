@@ -106,7 +106,7 @@ in
 
     # Multimedia
     vlc
-    spotify
+    deezer-enhanced
 
     # Terminal emulator
     kitty
