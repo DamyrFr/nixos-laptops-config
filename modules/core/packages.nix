@@ -49,6 +49,7 @@
 
   # Firefox
   programs.firefox.enable = true;
+  programs.chromium.enable = true;
 
   # Configure Git globally
   programs.git = {
