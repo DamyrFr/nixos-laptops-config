@@ -44,6 +44,7 @@ in
     kubectx
     kubent
     k9s
+    hubble
     fluxcd
     scaleway-cli
 
