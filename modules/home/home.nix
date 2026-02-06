@@ -127,6 +127,7 @@ in
     cmake
     pkg-config
     python311Packages.virtualenv
+    chromium
 
     # AI tools
     claude-code
