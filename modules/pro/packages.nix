@@ -14,6 +14,7 @@
       google-cloud-sdk
       _1password-gui
       _1password-cli
+      openvpn3
     ];
   };
 }
