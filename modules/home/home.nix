@@ -93,7 +93,6 @@ in
     terraform-ls
     terragrunt
     packer
-    google-cloud-sdk
     kubernetes-helm
     tfsec
     terraform-docs
