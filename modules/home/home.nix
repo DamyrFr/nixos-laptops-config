@@ -127,6 +127,7 @@ in
     pkg-config
     python311Packages.virtualenv
     chromium
+    hugo
 
     # AI tools
     claude-code
