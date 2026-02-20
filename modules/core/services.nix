@@ -28,7 +28,7 @@
   # Enable systemd-resolved for DNS
   services.resolved = {
     enable = true;
-    dnssec = "allow-downgrade";
+    settings.Resolve.DNSSEC = "allow-downgrade";
     # DNS servers are configured in system.nix via networking.nameservers
   };
 
