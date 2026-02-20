@@ -11,7 +11,7 @@
       velero
       vcluster
       awscli2
-      google-cloud-sdk
+      (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       _1password-gui
       _1password-cli
       openvpn3
