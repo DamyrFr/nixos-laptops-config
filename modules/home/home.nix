@@ -37,7 +37,7 @@ in
     vhs
     sops
     fastfetch
-    oathtool
+    oath-toolkit
 
     # DevOps
     kubectl
