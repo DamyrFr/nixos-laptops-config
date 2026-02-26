@@ -38,6 +38,7 @@ in
     sops
     fastfetch
     oath-toolkit
+    mariadb.client
 
     # DevOps
     kubectl
