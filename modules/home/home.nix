@@ -39,6 +39,7 @@ in
     fastfetch
     oath-toolkit
     mariadb.client
+    slidev-cli
 
     # DevOps
     kubectl
