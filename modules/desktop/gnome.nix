@@ -10,16 +10,16 @@
     gnomeExtensions.user-themes
     gnomeExtensions.blur-my-shell
     gnomeExtensions.weather-oclock
-    gnomeExtensions.quick-settings-tweaker
-    gnomeExtensions.tailscale-qs
     gnomeExtensions.pop-shell
+    gnomeExtensions.open-bar
 
     # Theme
-    paper-icon-theme
-    (marble-shell-theme.override {
-      colors = ["yellow"];
-      additionalInstallationTweaks = [ "-O" ];
-    })
+    #paper-icon-theme
+    #(marble-shell-theme.override {
+    #  colors = ["yellow"];
+    #  additionalInstallationTweaks = [ "-O" ];
+    #})
+    catppuccin-gtk
 
     # Additional GNOME tools
     wl-clipboard
