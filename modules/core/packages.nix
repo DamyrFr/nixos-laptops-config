@@ -31,6 +31,7 @@
     clamav
     apparmor-profiles
     apparmor-utils
+    openssl
 
     # Build essentials (system-level)
     git

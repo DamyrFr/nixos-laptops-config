@@ -14,6 +14,7 @@ in
   imports = [
     ./neovim.nix
     ./zellij.nix
+    ./k9s.nix
 #    ../desktop/hyprland.nix
   ];
 
@@ -50,6 +51,8 @@ in
     hubble
     fluxcd
     scaleway-cli
+    goaccess
+    k6
 
     # Network tools
     nmap

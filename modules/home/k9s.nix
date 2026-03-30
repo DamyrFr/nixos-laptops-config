@@ -346,7 +346,7 @@ programs.k9s = {
     };
 
     get-suspended-kustomizations = {
-      shortCut = "Shift-S";
+      shortCut = "Shift-U";
       confirm = false;
       description = "Suspended Kustomizations";
       scopes = [ "kustomizations" ];
