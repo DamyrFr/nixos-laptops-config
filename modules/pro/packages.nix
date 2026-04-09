@@ -15,6 +15,8 @@
       _1password-gui
       _1password-cli
       openvpn3
+      haskellPackages.psql
+      haskellPackages.mysql
     ];
   };
 }
