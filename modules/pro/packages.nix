@@ -15,8 +15,8 @@
       _1password-gui
       _1password-cli
       openvpn3
-      haskellPackages.psql
-      haskellPackages.mysql
+      postgresql # Provides psql CLI (server binaries included but no service runs unless enabled)
+      # MySQL client already available via mariadb.client in home.nix
     ];
   };
 }
