@@ -32,6 +32,7 @@
     apparmor-profiles
     apparmor-utils
     openssl
+    age
 
     # Build essentials (system-level)
     git

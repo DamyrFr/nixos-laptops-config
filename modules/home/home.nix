@@ -1,15 +1,5 @@
 { config, pkgs, username, ... }:
 
-let
-  # Override os-service-types to add missing typing-extensions dependency
-  python3Packages = pkgs.python311Packages.override {
-    overrides = self: super: {
-      os-service-types = super.os-service-types.overridePythonAttrs (old: {
-        propagatedBuildInputs = (old.propagatedBuildInputs or []) ++ [ self.typing-extensions ];
-      });
-    };
-  };
-in
 {
   imports = [
     ./neovim.nix
@@ -63,7 +53,7 @@ in
 
     # System utilities
     ncdu
-    neofetch
+    fastfetch
     tree
 
     # Search and text processing
@@ -80,10 +70,9 @@ in
     autoconf
 
     # Programming languages
-    python311
-    python311Packages.pip
-    nodePackages.npm
-    nodePackages.yarn
+    python3
+    python3Packages.pip
+    yarn
     ruby
     go
     php83
@@ -131,9 +120,10 @@ in
     cups
     cmake
     pkg-config
-    python311Packages.virtualenv
+    python3Packages.virtualenv
     chromium
     hugo
+    obsidian
 
     # AI tools
     claude-code
