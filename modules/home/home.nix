@@ -159,6 +159,7 @@
       setopt always_to_end
       setopt AUTO_CD
       setopt NO_BEEP
+      setopt NO_CASE_GLOB
 
       # Functions
       extract () {
@@ -195,6 +196,9 @@
         sudo rkhunter --checkall --cronjob
         sudo chkrootkit > /tmp/chkrootkit.log
       }
+
+      # Case-insensitive completion
+      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 
       # Completions
       source <(kubectl completion zsh)
