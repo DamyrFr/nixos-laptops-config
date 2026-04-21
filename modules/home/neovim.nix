@@ -45,5 +45,8 @@
     dockerfile-language-server-nodejs # dockerls
     gopls                            # gopls (Go)
     lua-language-server              # lua_ls
+    terraform-ls                     # terraformls
+    helm-ls                          # helm_ls
+    ansible-language-server          # ansiblels
   ];
 }
