@@ -37,5 +37,13 @@
   home.packages = with pkgs; [
     ripgrep
     fd
+    # LSP servers
+    pyright                          # pyright (Python)
+    yaml-language-server             # yamlls
+    vscode-langservers-extracted     # jsonls
+    bash-language-server             # bashls
+    dockerfile-language-server-nodejs # dockerls
+    gopls                            # gopls (Go)
+    lua-language-server              # lua_ls
   ];
 }
