@@ -42,7 +42,7 @@
     yaml-language-server             # yamlls
     vscode-langservers-extracted     # jsonls
     bash-language-server             # bashls
-    dockerfile-language-server-nodejs # dockerls
+    dockerfile-language-server	     # dockerls
     gopls                            # gopls (Go)
     lua-language-server              # lua_ls
     terraform-ls                     # terraformls
