@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -6,6 +6,11 @@
     opencode
     rtk
   ];
+
+  home.activation.rtkInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD ${pkgs.rtk}/bin/rtk init -g
+    $DRY_RUN_CMD ${pkgs.rtk}/bin/rtk init -g --opencode
+  '';
 
   # Base coding guidelines skill (Andrej Karpathy)
   # https://github.com/forrestchang/andrej-karpathy-skills
