@@ -6,8 +6,6 @@
       mattermost-desktop
       framework-tool
       framework-tool-tui
-      pkgs-unstable.crush
-      pkgs-unstable.opencode
       velero
       vcluster
       awscli2

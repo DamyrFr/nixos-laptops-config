@@ -5,6 +5,7 @@
     ./neovim.nix
     ./zellij.nix
     ./k9s.nix
+    ./agent.nix
 #    ../desktop/hyprland.nix
   ];
 
@@ -125,8 +126,6 @@
     hugo
     obsidian
 
-    # AI tools
-    claude-code
   ];
 
   # Zsh configuration
