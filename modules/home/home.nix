@@ -44,6 +44,7 @@
     scaleway-cli
     goaccess
     k6
+    clusterctl
 
     # Network tools
     nmap
