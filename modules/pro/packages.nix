@@ -7,6 +7,9 @@
       framework-tool
       framework-tool-tui
       velero
+      ansible
+      aws-vault
+      glab
       vcluster
       awscli2
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
