@@ -52,6 +52,7 @@
     fping
     openvpn
     testssl
+    wireguard-tools
 
     # System utilities
     ncdu
@@ -63,7 +64,6 @@
     ack
     jq
     yq-go
-    silver-searcher
 
     # Development tools
     git-crypt
