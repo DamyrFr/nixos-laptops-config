@@ -62,7 +62,7 @@
     ripgrep
     ack
     jq
-    yq
+    yq-go
     silver-searcher
 
     # Development tools
