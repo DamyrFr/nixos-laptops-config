@@ -3,6 +3,14 @@
 let
   # Per-remote Git identities, selected automatically via
   # includeIf "hasconfig:remote.*.url:..." based on a repo's remote URLs.
+  #
+  # IMPORTANT: the default identity must be provided via an unconditional
+  # `[include]`, NOT via an inline `[user]` section. The NixOS programs.git
+  # module renders sections alphabetically, so an inline `[user]` block would
+  # always be emitted AFTER the `[includeIf]` blocks and, since Git applies
+  # config top-to-bottom with last-value-wins, it would override the matched
+  # per-remote identity. `[include]` sorts before `[includeIf]`, so the
+  # conditional identities correctly take precedence.
   identityDamyR = pkgs.writeText "git-identity-damyr" ''
     [user]
     	name = DamyR
@@ -28,6 +36,7 @@ in
     wget
     rsync
     wirelesstools
+    pwgen
 
     # Network diagnostics (system-level)
     tcpdump
@@ -71,15 +80,12 @@ in
   programs.git = {
     enable = true;
     config = {
-      # Default identity (personal machines: DamyR). On the pro machine this
-      # base user is overridden to tw via modules/pro/git.nix. Regardless of
-      # the default, the includeIf rules below pick the right identity based
-      # on the repository's remote URL.
-      user = {
-        name = "DamyR";
-        email = "thomas@anvir.fr";
-        #signingkey = "~/.ssh/id_ed25519.pub";
-      };
+      # Default identity (personal machines: DamyR). Provided via an
+      # unconditional `[include]` so it sits BEFORE the `[includeIf]` blocks in
+      # the generated (alphabetically-ordered) gitconfig, letting the per-remote
+      # rules below override it. On the pro machine this default is overridden
+      # to tw via modules/pro/git.nix.
+      include.path = "${identityDamyR}";
 
       # github.com -> DamyR (https, scp-style ssh, and ssh:// remotes).
       # NB: scp-style URLs (git@host:path) require the ":*/**" form; a bare
