@@ -45,6 +45,7 @@
     goaccess
     k6
     clusterctl
+    pre-commit
 
     # Network tools
     nmap
