@@ -3,9 +3,23 @@
 {
   home.packages = with pkgs; [
     claude-code
-    opencode
     rtk
   ];
+
+  # OpenCode + plugins. The module writes ~/.config/opencode/opencode.json
+  # (auto-adds $schema). `plugin` lists npm plugins opencode fetches into
+  # node_modules/ on startup. plugins/rtk.ts stays runtime-managed by rtk.
+  # extraPackages provides the Linux runtime deps opencode-notifier needs:
+  # libnotify (notify-send) + alsa-utils (aplay) for sounds.
+  programs.opencode = {
+    enable = true;
+    package = pkgs.opencode;
+    extraPackages = with pkgs; [ libnotify alsa-utils ];
+    settings.plugin = [
+      "opencode-mem"
+      "@mohak34/opencode-notifier@latest"
+    ];
+  };
 
   home.activation.rtkInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD ${pkgs.rtk}/bin/rtk init -g
