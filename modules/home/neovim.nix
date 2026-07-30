@@ -12,7 +12,7 @@
     # Load the config cloned by the neovim-config-sync service below.
     # home-manager generates ~/.config/nvim/init.lua itself, so the requires
     # must be injected here or the cloned lua/ modules never load.
-    extraLuaConfig = ''
+    initLua = ''
       require('plugins')
       require('settings')
       require('lsp')

@@ -110,7 +110,7 @@
     kitty
 
     # Latex
-    texlive.combined.scheme-full
+    texliveFull
     texlivePackages.latexmk
 
     # Task management
@@ -127,7 +127,7 @@
     chromium
     hugo
     obsidian
-
+    proton-vpn
   ];
 
   # Zsh configuration
