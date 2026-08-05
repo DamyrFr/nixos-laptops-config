@@ -49,6 +49,13 @@
         "helm uninstall*" = "deny";
         "helm rollback*" = "deny";
         "helm delete*" = "deny";
+        # rtk rewrite mirror: `rtk rewrite` prefixes these with `rtk `,
+        # which would bypass the rules above (anchored wildcard match).
+        "rtk helm install*" = "deny";
+        "rtk helm upgrade*" = "deny";
+        "rtk helm uninstall*" = "deny";
+        "rtk helm rollback*" = "deny";
+        "rtk helm delete*" = "deny";
 
         "flux delete*" = "deny";
         "flux suspend*" = "deny";
@@ -71,6 +78,23 @@
         "gcloud *restart*" = "deny";
         "gcloud *promote*" = "deny";
         "gcloud *rollback*" = "deny";
+        # rtk rewrite mirror: rtk rewrites `gcloud ...` -> `rtk gcloud ...`.
+        "rtk gcloud *create*" = "deny";
+        "rtk gcloud *delete*" = "deny";
+        "rtk gcloud *update*" = "deny";
+        "rtk gcloud *set*" = "deny";
+        "rtk gcloud *patch*" = "deny";
+        "rtk gcloud *add*" = "deny";
+        "rtk gcloud *remove*" = "deny";
+        "rtk gcloud *deploy*" = "deny";
+        "rtk gcloud *import*" = "deny";
+        "rtk gcloud *undelete*" = "deny";
+        "rtk gcloud *reset*" = "deny";
+        "rtk gcloud *start*" = "deny";
+        "rtk gcloud *stop*" = "deny";
+        "rtk gcloud *restart*" = "deny";
+        "rtk gcloud *promote*" = "deny";
+        "rtk gcloud *rollback*" = "deny";
 
         "aws *create*" = "deny";
         "aws *delete*" = "deny";
@@ -96,6 +120,31 @@
         "aws s3 rb*" = "deny";
         "aws s3api put-object*" = "deny";
         "aws s3api delete-object*" = "deny";
+        # rtk rewrite mirror: rtk rewrites `aws ...` -> `rtk aws ...`.
+        "rtk aws *create*" = "deny";
+        "rtk aws *delete*" = "deny";
+        "rtk aws *put*" = "deny";
+        "rtk aws *update*" = "deny";
+        "rtk aws *modify*" = "deny";
+        "rtk aws *terminate*" = "deny";
+        "rtk aws *remove*" = "deny";
+        "rtk aws *attach*" = "deny";
+        "rtk aws *detach*" = "deny";
+        "rtk aws *register*" = "deny";
+        "rtk aws *deregister*" = "deny";
+        "rtk aws *revoke*" = "deny";
+        "rtk aws *authorize*" = "deny";
+        "rtk aws *reboot*" = "deny";
+        "rtk aws *run-instances*" = "deny";
+        "rtk aws *stop-instances*" = "deny";
+        "rtk aws *start-instances*" = "deny";
+        "rtk aws s3 rm*" = "deny";
+        "rtk aws s3 mv*" = "deny";
+        "rtk aws s3 cp*" = "deny";
+        "rtk aws s3 sync*" = "deny";
+        "rtk aws s3 rb*" = "deny";
+        "rtk aws s3api put-object*" = "deny";
+        "rtk aws s3api delete-object*" = "deny";
 
         "terraform apply*" = "deny";
         "terraform destroy*" = "deny";
