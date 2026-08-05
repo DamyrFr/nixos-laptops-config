@@ -48,6 +48,7 @@ in
     # System monitoring
     htop
     strace
+    perf
 
     # Security (system-level)
     gnupg
