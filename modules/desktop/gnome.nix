@@ -30,7 +30,6 @@
 
     # GNOME applications
     gnome-pass-search-provider
-    pinentry-gtk2
   ];
 
   # Remove unwanted GNOME applications (games, etc.)
