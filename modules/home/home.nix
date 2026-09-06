@@ -39,6 +39,7 @@
     kubectx
     kubent
     k9s
+    sofka # via the sofka flake input overlay (not in nixpkgs)
     hubble
     fluxcd
     scaleway-cli

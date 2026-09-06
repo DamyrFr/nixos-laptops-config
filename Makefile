@@ -1,6 +1,10 @@
 check:
 	nix flake check
 
+nix-flake-update:
+	nix flake update
+	nix flake update sofka
+
 nixos-build-ghost:
 	sudo nixos-rebuild switch --flake ~/nixos-config#ghost
 

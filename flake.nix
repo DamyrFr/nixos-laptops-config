@@ -12,9 +12,19 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Not in nixpkgs; upstream ships its own flake + overlay.
+    sofka = {
+      url = "github:nklmilojevic/sofka";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, disko }: {
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, disko, sofka }:
+  let
+    # Makes pkgs.sofka available to every host and to home-manager
+    # (useGlobalPkgs = true means it shares the system pkgs).
+    overlays = { nixpkgs.overlays = [ sofka.overlays.default ]; };
+  in {
     nixosConfigurations = {
       ghost = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -27,6 +37,7 @@
           };
         };
         modules = [
+          overlays
           ./hosts/ghost/configuration.nix
           ./modules/core
           ./modules/desktop
@@ -56,6 +67,7 @@
           };
         };
         modules = [
+          overlays
           ./hosts/waays/configuration.nix
           ./hosts/waays/disko.nix
           disko.nixosModules.disko
@@ -88,6 +100,7 @@
           };
         };
         modules = [
+          overlays
           ./hosts/dust/configuration.nix
           ./hosts/dust/disko.nix
           disko.nixosModules.disko
