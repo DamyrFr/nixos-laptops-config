@@ -104,7 +104,9 @@
 
     # Multimedia
     vlc
-    deezer-enhanced
+    # Disabled: pulls nwjs (bundled Chromium), marked insecure upstream.
+    # Re-enable together with permittedInsecurePackages in modules/core/packages.nix
+    # deezer-enhanced
 
     # Terminal emulator
     kitty
