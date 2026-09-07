@@ -43,10 +43,6 @@
   system.autoUpgrade = {
     enable = true;
     flake = "/home/${username}/nixos-config";
-    flags = [
-      "--update-input" "nixpkgs"
-      "--commit-lock-file"
-    ];
     dates = "daily";
     randomizedDelaySec = "45min";
     allowReboot = false;

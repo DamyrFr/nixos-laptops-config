@@ -76,8 +76,9 @@ Long comment in `modules/core/packages.nix` explains why.
   scope, set `environment.variables.EDITOR = "nvim";` in a `modules/core/`
   module.
 - Sudo is passwordless for the `wheel` group.
-- `system.autoUpgrade` runs daily with `--update-input nixpkgs
-  --commit-lock-file` (no reboot). The lock file gets auto-committed.
+- `system.autoUpgrade` runs daily against the committed `flake.lock` (no
+  lock update, no auto-commit, no reboot). Bump inputs deliberately with
+  `nix flake update` + commit; the lock is shared across all hosts.
 - `boot.loader.systemd-boot.configurationLimit = 5` (only 5 boot entries).
 - `nix.gc` weekly, deletes generations older than 7 days.
 
