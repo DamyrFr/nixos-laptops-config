@@ -98,6 +98,7 @@
 
     # Security tools
     pass
+    nono # AI sandbox (Landlock)
 
     # Virtualization
     virt-manager
