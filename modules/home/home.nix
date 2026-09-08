@@ -269,7 +269,7 @@
       tf = "tofu";
       k9ss = "k9s --insecure-skip-tls-verify";
       so = "sofka";
-      soro = "sofka --readonly"
+      soro = "sofka --readonly";
       kb = "kubectl kustomize --load-restrictor LoadRestrictionsNone  ./";
       fs = "flux get all -A --status-selector ready=false";
       nixupgrade = "sudo nixos-rebuild switch --upgrade --flake ~/nixos-config#`hostname`";
