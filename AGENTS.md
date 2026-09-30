@@ -55,6 +55,20 @@ Long comment in `modules/core/packages.nix` explains why.
   and `~/.config/opencode/opencode-notifier.json` and `node_modules/`,
   `package.json`, `bun.lock` are runtime-managed by opencode / the plugins —
   do not Nix-manage them.
+- Pi agent directory is `~/.pi/agent` (there is no home-manager module).
+  `settings.json`, `pi-permissions.jsonc` (the pi-permission-system policy,
+  mirroring the opencode bash gate), `themes/tokyonight-day.json` and
+  `skills/` are written by `modules/home/agent.nix`; because `settings.json`
+  is a store symlink,
+  `pi install`, `pi config` and `/settings` cannot persist changes — edit the
+  `packages` / `theme` attrs in the Nix module instead. `auth.json`,
+  `mcp.json`, `models.json`, `npm/` and `sessions/` stay runtime-managed. The
+  declared npm packages are installed by the `piPackages` activation
+  (`pi update --extensions`), which needs network and `npm` on PATH (hence
+  `nodejs` in `home.packages`).
+- `rtk init --agent pi` is deliberately NOT run: it would drop a second
+  rewriter (`~/.pi/agent/extensions/rtk.ts`) next to the `pi-rtk-optimizer`
+  package, which already delegates to `rtk rewrite`.
 - Neovim config is cloned at first login by the `neovim-config-sync`
   systemd user service from `github.com/DamyrFr/neovim-config`.
   `modules/home/neovim.nix` only injects `extraLuaConfig` (`require`
