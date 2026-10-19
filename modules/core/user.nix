@@ -11,6 +11,7 @@
       "audio"
       "video"
       "plugdev"
+      "dialout"  # Serial access for ESP32/embedded flashing
       "scanner"
       "libvirtd"  # For virt-manager
     ];

@@ -167,6 +167,7 @@ shellAliases = {
 - `terraform` / `opentofu` - Infrastructure as Code
 - `pass` - Password manager
 - `claude-code` - AI development assistant
+- `pi-coding-agent` - AI coding agent (`pi`), configured in `modules/home/agent.nix`
 
 ### Professional Tools (lapwar)
 - `mattermost-desktop` - Team communication
