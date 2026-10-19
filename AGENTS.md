@@ -55,17 +55,18 @@ Long comment in `modules/core/packages.nix` explains why.
   and `~/.config/opencode/opencode-notifier.json` and `node_modules/`,
   `package.json`, `bun.lock` are runtime-managed by opencode / the plugins —
   do not Nix-manage them.
-- Pi agent directory is `~/.pi/agent` (there is no home-manager module).
-  `settings.json`, `pi-permissions.jsonc` (the pi-permission-system policy,
-  mirroring the opencode bash gate), `themes/tokyonight-day.json` and
-  `skills/` are written by `modules/home/agent.nix`; because `settings.json`
-  is a store symlink,
-  `pi install`, `pi config` and `/settings` cannot persist changes — edit the
-  `packages` / `theme` attrs in the Nix module instead. `auth.json`,
-  `mcp.json`, `models.json`, `npm/` and `sessions/` stay runtime-managed. The
-  declared npm packages are installed by the `piPackages` activation
-  (`pi update --extensions`), which needs network and `npm` on PATH (hence
-  `nodejs` in `home.packages`).
+- Pi agent directory is `~/.pi/agent`, configured through home-manager's
+  `programs.pi-coding-agent` module in `modules/home/agent.nix`.
+  `settings.json` is a store symlink, so `pi install`, `pi config` and
+  `/settings` cannot persist changes: edit the module instead. Pi packages are
+  pinned (`npm:name@x.y.z`); bump the version and rebuild to update.
+  `pi-permissions.jsonc` (pi-permission-system policy, mirrors the opencode
+  bash gate), `themes/`, `extensions/status-footer.ts` and `skills/` are also
+  written by the module. `auth.json`, `mcp.json`, `trust.json`, `models.json`,
+  `npm/` and `sessions/` stay runtime-managed. MCP uses Pi's built-in
+  support (`pi mcp add`, user-level `~/.pi/agent/mcp.json`); do not
+  reinstall `pi-mcp-adapter`, which would replace it. The `piPackages`
+  activation (`pi update --extensions`) installs packages and needs network.
 - `rtk init --agent pi` is deliberately NOT run: it would drop a second
   rewriter (`~/.pi/agent/extensions/rtk.ts`) next to the `pi-rtk-optimizer`
   package, which already delegates to `rtk rewrite`.
