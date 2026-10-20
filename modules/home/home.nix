@@ -85,6 +85,7 @@
     podman
     podman-compose
     buildah
+    dive
 
     # Cloud and infrastructure tools
     opentofu
