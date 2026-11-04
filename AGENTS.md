@@ -60,13 +60,18 @@ Long comment in `modules/core/packages.nix` explains why.
   `settings.json` is a store symlink, so `pi install`, `pi config` and
   `/settings` cannot persist changes: edit the module instead. Pi packages are
   pinned (`npm:name@x.y.z`); bump the version and rebuild to update.
-  `pi-permissions.jsonc` (pi-permission-system policy, mirrors the opencode
-  bash gate), `themes/`, `extensions/status-footer.ts` and `skills/` are also
-  written by the module. `auth.json`, `mcp.json`, `trust.json`, `models.json`,
+  `extensions/pi-permission-system/config.json` (@gotgenes/pi-permission-system
+  policy, mirrors the opencode bash gate), `themes/`,
+  `extensions/status-footer.ts` and `skills/` are also written by the module. `auth.json`, `mcp.json`, `trust.json`, `models.json`,
   `npm/` and `sessions/` stay runtime-managed. MCP uses Pi's built-in
   support (`pi mcp add`, user-level `~/.pi/agent/mcp.json`); do not
   reinstall `pi-mcp-adapter`, which would replace it. The `piPackages`
-  activation (`pi update --extensions`) installs packages and needs network.
+  activation (`pi update --extensions`) only updates installed packages and
+  needs network; a newly declared package installs at the next plain `pi`
+  start, so run that once before `pi-box`.
+- `pi-box` (`modules/home/agent.nix`) runs Pi under nono from a project
+  directory; plain `pi` stays unsandboxed. Limits are fixed at launch, so
+  approving a Pi prompt cannot get past them: add a flag to `pi-box` instead.
 - `rtk init --agent pi` is deliberately NOT run: it would drop a second
   rewriter (`~/.pi/agent/extensions/rtk.ts`) next to the `pi-rtk-optimizer`
   package, which already delegates to `rtk rewrite`.

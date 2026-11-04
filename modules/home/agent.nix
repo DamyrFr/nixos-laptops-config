@@ -190,6 +190,8 @@ let
   secretPaths = map (p: "${config.home.homeDirectory}/${p}") [
     ".ssh/*"
     ".gnupg/*"
+    ".password-store"
+    ".password-store/*"
     ".aws/*"
     ".kube/*"
     ".config/gcloud/*"
@@ -198,11 +200,35 @@ let
     ".local/share/opencode/auth.json"
     ".claude/.credentials.json"
   ];
+
+  # Runs the whole Pi process under nono (Landlock), so limits also bind
+  # extensions and child processes. Network stays open: pi-web-access needs it.
+  # The --read paths are required on NixOS, nono's profiles do not cover them.
+  # --allow-cwd grants the launch directory, hence the refusal of $HOME and its
+  # parents.
+  piBox = pkgs.writeShellScriptBin "pi-box" ''
+    case "$HOME/" in
+      "''${PWD%/}"/*)
+        echo "pi-box: refusing to grant $PWD, run it from a project directory" >&2
+        exit 1
+        ;;
+    esac
+    # Extensions compile into $TMPDIR/jiti. Keep it private: plain `pi` runs
+    # what is in /tmp/jiti outside the sandbox, so never grant that one.
+    export TMPDIR="$HOME/.pi/box-tmp"
+    mkdir -p "$TMPDIR"
+    exec ${pkgs.nono}/bin/nono run --profile node-dev --allow-cwd \
+      --read /nix/store --read /run/current-system \
+      --read /etc/profiles --read /etc/static \
+      --allow "$HOME/.pi" \
+      -- pi "$@"
+  '';
 in
 {
   home.packages = with pkgs; [
     claude-code
     rtk
+    piBox
   ];
 
   assertions = [
@@ -219,7 +245,15 @@ in
   # libnotify (notify-send) + alsa-utils (aplay) for sounds.
   programs.opencode = {
     enable = true;
-    package = pkgs.opencode;
+    # TEMPORARY: nixpkgs' node_modules hash is stale for opencode 2.2.5
+    # (NixOS/nixpkgs#582673). Same Linux hash as the upstream fix c399e1b7fb.
+    # Drop this override once flake.lock contains that commit: left in place,
+    # it fails with a hash mismatch as soon as opencode's version changes.
+    package = pkgs.opencode.overrideAttrs (old: {
+      node_modules = old.node_modules.overrideAttrs {
+        outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
+      };
+    });
     extraPackages = with pkgs; [ libnotify alsa-utils ];
     settings = {
       plugin = [
@@ -271,7 +305,7 @@ in
       packages = [
         # Pi-native RTK rewriter; replaces `rtk init --agent pi`.
         "npm:pi-rtk-optimizer@0.9.0"
-        "npm:pi-permission-system@0.8.0"
+        "npm:@gotgenes/pi-permission-system@42.0.0"
         "npm:pi-subagents@0.79.1"
         "npm:pi-web-access@0.42.0"
         "npm:pi-goal-x@0.32.3"
@@ -281,26 +315,22 @@ in
     };
   };
 
-  # Reconciles the declared `packages` into ~/.pi/agent/npm/. Needs network,
-  # so never let it fail an activation.
+  # Updates installed `packages` in ~/.pi/agent/npm/ but does not install newly
+  # declared ones: plain `pi` does that at startup, pi-box cannot. Needs
+  # network, so never let it fail an activation.
   home.activation.piPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD env PATH="${pkgs.nodejs}/bin:$PATH" \
       ${pkgs.pi-coding-agent}/bin/pi update --extensions || true
   '';
 
-  # Pi permission policy (npm:pi-permission-system), mirrors the opencode gate.
-  # Bash rules are last-match-wins and Nix sorts keys, so "*" always lands
-  # before the deny rules. Never add a fallback that sorts after them.
-  home.file.".pi/agent/pi-permissions.jsonc".source =
-    (pkgs.formats.json { }).generate "pi-permissions.jsonc" {
-      defaultPolicy = {
-        tools = "ask";
-        bash = "ask";
-        mcp = "ask";
-        skills = "ask";
-        special = "ask";
-      };
-      tools = {
+  # Pi permission policy (npm:@gotgenes/pi-permission-system), mirrors the
+  # opencode gate. Rules are last-match-wins and Nix sorts keys, so "*" always
+  # lands before the specific rules. Never add a fallback that sorts after them.
+  # An invalid global config drops all these rules, so keep it schema-valid.
+  home.file.".pi/agent/extensions/pi-permission-system/config.json".source =
+    (pkgs.formats.json { }).generate "pi-permission-system-config.json" {
+      permission = {
+        "*" = "ask";
         # Read-only tools: allowed (opencode does not gate reads either).
         read = "allow";
         grep = "allow";
@@ -312,24 +342,24 @@ in
         tool_search = "allow";
         # codemode scripts can call every other tool, including MCP ones.
         codemode = "ask";
-        # .env files ask even inside the project ("read" < "read:*" in key
-        # order, so these win over the plain allow).
-        "read:*/.env" = "ask";
-        "read:*/.env.*" = "ask";
-        "grep:*/.env" = "ask";
-        "grep:*/.env.*" = "ask";
-      }
-      // lib.listToAttrs (
-        lib.concatMap
-          (path: map (tool: lib.nameValuePair "${tool}:${path}" "deny") [ "read" "grep" "find" "ls" "edit" "write" ])
-          secretPaths
-      );
-      # Loading/reading skills is not a mutation.
-      skills."*" = "allow";
-      # Path protection: paths outside the session cwd ask.
-      special.external_directory = "ask";
-      # Same command gate as opencode (denyCmds from the let block above).
-      bash = bashPolicy;
+        # Applies to file tools and to paths named in bash commands. .env files
+        # ask even inside the project.
+        path = {
+          "*" = "allow";
+          "*.env" = "ask";
+          "*.env.*" = "ask";
+          # Any folder named secrets, at any depth.
+          "*/secrets" = "ask";
+          "*/secrets/*" = "ask";
+        }
+        // lib.genAttrs secretPaths (_: "deny");
+        # Loading/reading skills is not a mutation.
+        skill."*" = "allow";
+        # Path protection: paths outside the session cwd ask.
+        external_directory = "ask";
+        # Same command gate as opencode (denyCmds from the let block above).
+        bash = bashPolicy;
+      };
     };
 
   # White/clean theme matching the neovim colorscheme (tokyonight-day). The

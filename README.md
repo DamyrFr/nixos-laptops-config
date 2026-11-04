@@ -10,20 +10,34 @@ This repository contains declarative NixOS configurations for multiple machines,
 
 ## Machines
 
-- **ghost** - Desktop system (user: damyr)
-- **lapwar** - Laptop system with professional tools (user: thomas)
+| Host | User | Profile |
+|------|------|---------|
+| **ghost** | `damyr` | Desktop system |
+| **lapwar** | `thomas` | Work laptop (Waays) with professional tools |
+| **dust** | `damyr` | Secondary system, partitioned with disko |
+
+> Note: `lapwar` is built from `hosts/waays/` — the directory name and the
+> flake attribute differ.
 
 ## Project Structure
 
 ```
 .
-├── flake.nix                 # Main flake configuration
+├── flake.nix                 # Main flake (hosts, inputs, sofka overlay)
+├── Makefile                  # check / build / update / clean targets
+├── AGENTS.md                 # Repo gotchas for AI agents
 ├── hosts/                    # Host-specific configurations
 │   ├── ghost/
-│   │   └── configuration.nix
-│   └── waays/
+│   │   ├── configuration.nix
+│   │   └── hardware-configuration.nix
+│   ├── waays/                # -> flake attribute `lapwar`
+│   │   ├── configuration.nix
+│   │   ├── disko.nix
+│   │   └── hardware-configuration.nix
+│   └── dust/
 │       ├── configuration.nix
-│       └── disko.nix
+│       ├── disko.nix
+│       └── hardware-configuration.nix
 └── modules/                  # Modular configuration components
     ├── core/                 # System-level configuration
     │   ├── default.nix
@@ -35,45 +49,59 @@ This repository contains declarative NixOS configurations for multiple machines,
     ├── desktop/              # Desktop environments
     │   ├── default.nix
     │   ├── gnome.nix
-    │   └── hyprland.nix
+    │   └── hyprland.nix      # Present but not enabled (GNOME only)
     ├── home/                 # Home-manager configurations
     │   ├── default.nix
-    │   ├── home.nix
+    │   ├── home.nix          # Shell (zsh, starship, aliases) + user packages
     │   ├── home-manager.nix
+    │   ├── agent.nix         # AI agents: claude-code, opencode, pi, rtk, skills
+    │   ├── k9s.nix           # k9s with overridden python deps
     │   ├── kitty.nix
-    │   ├── neovim.nix
-    │   └── zellij.nix
-    └── pro/                  # Professional laptop configuration
+    │   ├── neovim.nix        # extraLuaConfig only; config synced from GitHub
+    │   ├── zellij.nix
+    │   └── pi/                # Pi assets (status-footer extension, theme)
+    └── pro/                  # Professional laptop config (lapwar only)
         ├── default.nix
-        ├── packages.nix      # Pro laptop packages
-        └── ssh.nix           # SSH configuration
+        ├── git.nix           # Per-remote git identity (see below)
+        ├── packages.nix
+        └── ssh.nix
 ```
+
+## Flake Inputs
+
+- **nixpkgs** — `nixos-unstable` (all hosts track unstable; no version pin)
+- **home-manager** — follows nixpkgs
+- **disko** — declarative partitioning (`lapwar` and `dust`)
+- **sofka** — upstream flake, exposed as an overlay (`pkgs.sofka`) on every host
 
 ## Module Organization
 
 ### Core Modules
 System-level configuration shared across all machines:
 - **user.nix** - User account configuration
-- **packages.nix** - Base system packages
+- **packages.nix** - Base system packages (also holds the git identity comment)
 - **security.nix** - Security settings (AppArmor, firewall, etc.)
-- **services.nix** - System services
+- **services.nix** - System services (daily auto-upgrade, GC, etc.)
 - **system.nix** - Basic system settings (timezone, locale, networking)
 
 ### Desktop Modules
 Desktop environment configurations:
-- **gnome.nix** - GNOME desktop environment
-- **hyprland.nix** - Hyprland window manager
+- **gnome.nix** - GNOME desktop environment (enabled)
+- **hyprland.nix** - Hyprland window manager (exists, import commented out)
 
 ### Home Modules
 User-level configurations via home-manager:
-- **home.nix** - Shell configuration (zsh, starship, aliases)
+- **home.nix** - Shell configuration (zsh, starship, aliases), git, user packages
+- **agent.nix** - AI coding agents (`pi-coding-agent`, `opencode`, `claude-code`, `rtk`) and pinned external skill files
+- **k9s.nix** - k9s (overrides `python311Packages.os-service-types` to add `typing-extensions`)
 - **kitty.nix** - Kitty terminal emulator
-- **neovim.nix** - Neovim editor
+- **neovim.nix** - Neovim (only injects `extraLuaConfig`; real config is synced at first login from `github.com/DamyrFr/neovim-config`)
 - **zellij.nix** - Zellij terminal multiplexer
 
 ### Pro Modules
 Professional laptop configurations (lapwar only):
-- **packages.nix** - Professional tools (Framework laptop utilities, Mattermost, etc.)
+- **packages.nix** - Professional tools (Framework utilities, Mattermost, etc.)
+- **git.nix** - Per-remote git identity (`lib.mkForce`)
 - **ssh.nix** - SSH configuration
 
 ## Installation
@@ -86,12 +114,17 @@ git clone <repository-url> ~/nixos-config
 cd ~/nixos-config
 ```
 
-2. Build the configuration for your machine:
+2. Stage new files — flakes only see `git add`-ed files:
+```bash
+git add <new-files>
+```
+
+3. Build the configuration for your machine:
 ```bash
 sudo nixos-rebuild switch --flake ~/nixos-config#<hostname>
 ```
 
-Replace `<hostname>` with either `ghost` or `lapwar`.
+Replace `<hostname>` with `ghost`, `lapwar`, or `dust`.
 
 ### Using the Alias
 
@@ -144,13 +177,15 @@ shellAliases = {
 ## Features
 
 ### System Configuration
-- **OS**: NixOS 25.11
+- **OS**: NixOS (nixos-unstable channel)
 - **Shell**: Zsh with starship prompt
 - **Terminal**: Kitty with custom light theme
-- **Editor**: Neovim with custom configuration
-- **Desktop**: GNOME (configurable)
+- **Editor**: Neovim (config synced from github.com/DamyrFr/neovim-config)
+- **Desktop**: GNOME (Hyprland available but disabled)
 - **Security**: AppArmor, ClamAV, automatic updates
-- **Garbage Collection**: Automatic cleanup of old generations (7 days)
+- **Auto-upgrade**: daily, against the committed `flake.lock` (no auto-commit)
+- **Garbage Collection**: weekly, generations older than 7 days
+- **Boot**: systemd-boot, 5 entries kept
 
 ### Development Tools
 - **Languages**: Python, Node.js, Go, Ruby
@@ -168,6 +203,7 @@ shellAliases = {
 - `pass` - Password manager
 - `claude-code` - AI development assistant
 - `pi-coding-agent` - AI coding agent (`pi`), configured in `modules/home/agent.nix`
+- `opencode` / `rtk` - Additional coding agents, configured in `modules/home/agent.nix`
 
 ### Professional Tools (lapwar)
 - `mattermost-desktop` - Team communication
@@ -183,6 +219,19 @@ The configuration includes global git settings:
 - **Useful aliases**: `lg` (pretty log), `am` (amend)
 - **Pull strategy**: rebase
 
+### Per-Remote Identity
+
+Git identity is selected per remote via `includeIf`:
+- `github.com` remotes → DamyR `<thomas@anvir.fr>`
+- `git.waays.fr` remotes → tw `<tg@waays.fr>`
+
+On `lapwar`, the default identity is overridden to tw via `modules/pro/git.nix`.
+
+**Important**: the default identity must be set via `[include].path`, never an
+inline `[user]` section — the NixOS `programs.git` module renders sections
+alphabetically, so an inline `[user]` would always sort after `[includeIf]`
+blocks and clobber the per-remote identities (Git is last-value-wins).
+
 ## Customization
 
 ### Changing Theme
@@ -196,12 +245,12 @@ Currently configured for GNOME. To switch to Hyprland or add another DE, modify 
 
 ### Adding a New Machine
 
-1. Create a new directory in `hosts/`:
+1. Create a new directory in `hosts/` (add `disko.nix` if the machine should be declaratively partitioned):
 ```bash
 mkdir -p hosts/new-machine
 ```
 
-2. Create `hosts/new-machine/configuration.nix`
+2. Create `hosts/new-machine/configuration.nix` (and `hardware-configuration.nix`)
 
 3. Add the configuration to `flake.nix`:
 ```nix
@@ -212,11 +261,24 @@ new-machine = nixpkgs.lib.nixosSystem {
     hostname = "new-machine";
   };
   modules = [
+    overlays
     ./hosts/new-machine/configuration.nix
+    # ./hosts/new-machine/disko.nix      # + disko.nixosModules.disko
     ./modules/core
     ./modules/desktop
     ./modules/home
-    # Add other modules as needed
+    # ./modules/pro                       # for work machines
+
+    home-manager.nixosModules.home-manager
+    {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.backupFileExtension = "backup";
+      home-manager.extraSpecialArgs = {
+        username = "your-username";
+      };
+      home-manager.users.your-username = import ./modules/home/home.nix;
+    }
   ];
 };
 ```
@@ -225,11 +287,19 @@ new-machine = nixpkgs.lib.nixosSystem {
 
 ### Update Flake Inputs
 ```bash
-nix flake update
+nix flake update          # or: make nix-flake-update (also updates sofka)
+```
+
+The lock is shared across all hosts — bump inputs deliberately and commit.
+Daily auto-upgrade rebuilds against the committed lock without updating it.
+
+### Validate
+```bash
+nix flake check           # or: make check
 ```
 
 ### Garbage Collection
-Automatic garbage collection runs periodically, removing generations older than 7 days.
+Automatic garbage collection runs weekly, removing generations older than 7 days.
 
 Manual garbage collection:
 ```bash
@@ -271,3 +341,4 @@ Personal configuration - use at your own risk.
 - NixOS: https://nixos.org
 - Home Manager: https://github.com/nix-community/home-manager
 - Disko: https://github.com/nix-community/disko
+- Sofka: https://github.com/nklmilojevic/sofka

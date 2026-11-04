@@ -103,7 +103,9 @@
 
     # Virtualization
     virt-manager
-    vagrant
+    # libguestfs is marked broken upstream (stuck on fuse2); vagrant only
+    # uses it for virt-sysprep in `vagrant package`. Drop it, keep libvirt.
+    (vagrant.override { libguestfs = emptyDirectory; })
 
     # Multimedia
     vlc
