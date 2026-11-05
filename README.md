@@ -54,7 +54,7 @@ This repository contains declarative NixOS configurations for multiple machines,
     │   ├── default.nix
     │   ├── home.nix          # Shell (zsh, starship, aliases) + user packages
     │   ├── home-manager.nix
-    │   ├── agent.nix         # AI agents: claude-code, opencode, pi, rtk, skills
+    │   ├── agent.nix         # AI agents: claude-code, pi, rtk, skills
     │   ├── k9s.nix           # k9s with overridden python deps
     │   ├── kitty.nix
     │   ├── neovim.nix        # extraLuaConfig only; config synced from GitHub
@@ -92,7 +92,7 @@ Desktop environment configurations:
 ### Home Modules
 User-level configurations via home-manager:
 - **home.nix** - Shell configuration (zsh, starship, aliases), git, user packages
-- **agent.nix** - AI coding agents (`pi-coding-agent`, `opencode`, `claude-code`, `rtk`) and pinned external skill files
+- **agent.nix** - AI coding agents (`pi-coding-agent`, `claude-code`, `rtk`) and pinned external skill files
 - **k9s.nix** - k9s (overrides `python311Packages.os-service-types` to add `typing-extensions`)
 - **kitty.nix** - Kitty terminal emulator
 - **neovim.nix** - Neovim (only injects `extraLuaConfig`; real config is synced at first login from `github.com/DamyrFr/neovim-config`)
@@ -203,7 +203,7 @@ shellAliases = {
 - `pass` - Password manager
 - `claude-code` - AI development assistant
 - `pi-coding-agent` - AI coding agent (`pi`), configured in `modules/home/agent.nix`
-- `opencode` / `rtk` - Additional coding agents, configured in `modules/home/agent.nix`
+- `rtk` - Command rewriter/optimizer, configured in `modules/home/agent.nix`
 
 ### Professional Tools (lapwar)
 - `mattermost-desktop` - Team communication

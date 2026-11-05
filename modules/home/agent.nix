@@ -28,7 +28,7 @@ let
     sha256 = "0kb7fxpxgczajxmvx1xhdrlzs6mz5y5aik28ffbxh4q7z2r2g7a6";
   };
 
-  # Bash commands denied by every agent's permission gate (opencode and pi).
+  # Bash commands denied by the agents' permission gate (pi).
   # Rules match the whole command string with `*` globs, last match wins.
   #
   # `denyVerbs` is expanded per tool into `*<tool>* <verb> *`, `*<tool>* <verb>`
@@ -197,7 +197,6 @@ let
     ".config/gcloud/*"
     ".docker/config.json"
     ".pi/agent/auth.json"
-    ".local/share/opencode/auth.json"
     ".claude/.credentials.json"
   ];
 
@@ -205,7 +204,8 @@ let
   # extensions and child processes. Network stays open: pi-web-access needs it.
   # The --read paths are required on NixOS, nono's profiles do not cover them.
   # --allow-cwd grants the launch directory, hence the refusal of $HOME and its
-  # parents.
+  # parents. ~/.npm is npm's cache: without write access, `npm install` (pi
+  # package installs) fails with EACCES inside the sandbox.
   piBox = pkgs.writeShellScriptBin "pi-box" ''
     case "$HOME/" in
       "''${PWD%/}"/*)
@@ -220,7 +220,7 @@ let
     exec ${pkgs.nono}/bin/nono run --profile node-dev --allow-cwd \
       --read /nix/store --read /run/current-system \
       --read /etc/profiles --read /etc/static \
-      --allow "$HOME/.pi" \
+      --allow "$HOME/.pi" --allow "$HOME/.npm" \
       -- pi "$@"
   '';
 in
@@ -238,41 +238,11 @@ in
     }
   ];
 
-  # OpenCode + plugins. The module writes ~/.config/opencode/opencode.json
-  # (auto-adds $schema). `plugin` lists npm plugins opencode fetches into
-  # node_modules/ on startup. plugins/rtk.ts stays runtime-managed by rtk.
-  # extraPackages provides the Linux runtime deps opencode-notifier needs:
-  # libnotify (notify-send) + alsa-utils (aplay) for sounds.
-  programs.opencode = {
-    enable = true;
-    # TEMPORARY: nixpkgs' node_modules hash is stale for opencode 2.2.5
-    # (NixOS/nixpkgs#582673). Same Linux hash as the upstream fix c399e1b7fb.
-    # Drop this override once flake.lock contains that commit: left in place,
-    # it fails with a hash mismatch as soon as opencode's version changes.
-    package = pkgs.opencode.overrideAttrs (old: {
-      node_modules = old.node_modules.overrideAttrs {
-        outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
-      };
-    });
-    extraPackages = with pkgs; [ libnotify alsa-utils ];
-    settings = {
-      plugin = [
-        "opencode-mem"
-        "@mohak34/opencode-notifier@latest"
-      ];
-      # Same gate as pi: edits ask, paths outside the project ask.
-      permission = {
-        edit = "ask";
-        external_directory = "ask";
-        bash = bashPolicy;
-      };
-    };
-  };
-
   home.activation.rtkInit = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD ${pkgs.rtk}/bin/rtk init -g
-    $DRY_RUN_CMD ${pkgs.rtk}/bin/rtk init -g --opencode
   '';
+
+  # Pi coding agent (home-manager module).
 
   # Pi coding agent (home-manager module). settings.json is a read-only
   # store symlink, so `pi install` / `pi config` / `/settings` cannot persist:
@@ -323,20 +293,19 @@ in
       ${pkgs.pi-coding-agent}/bin/pi update --extensions || true
   '';
 
-  # Pi permission policy (npm:@gotgenes/pi-permission-system), mirrors the
-  # opencode gate. Rules are last-match-wins and Nix sorts keys, so "*" always
+  # Pi permission policy (npm:@gotgenes/pi-permission-system). Rules are last-match-wins and Nix sorts keys, so "*" always
   # lands before the specific rules. Never add a fallback that sorts after them.
   # An invalid global config drops all these rules, so keep it schema-valid.
   home.file.".pi/agent/extensions/pi-permission-system/config.json".source =
     (pkgs.formats.json { }).generate "pi-permission-system-config.json" {
       permission = {
         "*" = "ask";
-        # Read-only tools: allowed (opencode does not gate reads either).
+        # Read-only tools: allowed.
         read = "allow";
         grep = "allow";
         find = "allow";
         ls = "allow";
-        # File mutations ask (same as opencode's permission.edit).
+        # File mutations ask.
         write = "ask";
         edit = "ask";
         tool_search = "allow";
@@ -357,7 +326,7 @@ in
         skill."*" = "allow";
         # Path protection: paths outside the session cwd ask.
         external_directory = "ask";
-        # Same command gate as opencode (denyCmds from the let block above).
+        # Same command gate as the policy above (denyCmds).
         bash = bashPolicy;
       };
     };
@@ -380,6 +349,4 @@ in
   home.file.".claude/skills/veille/SKILL.md".source = veilleSkill;
   home.file.".claude/skills/veille/sources.yml".source = veilleSources;
   home.file.".claude/skills/veille/fetch_feeds.py".source = veilleFetchFeeds;
-
-  home.file.".config/opencode/skills/base/SKILL.md".source = baseSkill;
 }
