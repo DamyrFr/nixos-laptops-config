@@ -35,26 +35,6 @@
         "type": "github"
       }
     },
-    "gnome-shell-cast": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792166586,
-        "narHash": "sha256-y8+WL8gLI0yoyn0+mtyqPFLMZAxpoQzf53Ary1QX4lg=",
-        "owner": "omid",
-        "repo": "gnome-shell-cast",
-        "rev": "5e1171a7c1e462f00b00309267014c60435ebc8f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "omid",
-        "repo": "gnome-shell-cast",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -132,7 +112,6 @@
     "root": {
       "inputs": {
         "disko": "disko",
-        "gnome-shell-cast": "gnome-shell-cast",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",

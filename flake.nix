@@ -17,24 +17,15 @@
       url = "github:nklmilojevic/sofka";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # GNOME Shell Cast: Chromecast screen/window/audio casting.
-    # Overlay exposes pkgs.gnome-extension-gnome-shell-cast (GJS half)
-    # and pkgs.gnome-shell-cast-daemon (Rust D-Bus daemon, activated
-    # on demand; both halves must come from the same revision).
-    gnome-shell-cast = {
-      url = "github:omid/gnome-shell-cast";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, disko, sofka, gnome-shell-cast }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, disko, sofka }:
   let
     # Makes pkgs.sofka available to every host and to home-manager
     # (useGlobalPkgs = true means it shares the system pkgs).
     overlays = {
       nixpkgs.overlays = [
         sofka.overlays.default
-        gnome-shell-cast.overlays.default
       ];
     };
   in {

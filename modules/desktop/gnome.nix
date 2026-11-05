@@ -7,7 +7,9 @@
     gnome-tweaks
     gnome-boxes
     gnomeExtensions.vitals
-    gnomeExtensions.user-themes
+    # Not gnomeExtensions.user-themes: that tracks extensions.gnome.org and can
+    # target a newer shell than nixpkgs ships. This one matches gnome-shell.
+    gnome-shell-extensions
     gnomeExtensions.blur-my-shell
     gnomeExtensions.weather-oclock
     gnomeExtensions.pop-shell

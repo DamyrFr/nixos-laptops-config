@@ -281,6 +281,8 @@ in
         "npm:pi-goal-x@0.32.3"
         "npm:pi-btw@0.8.0"
         "npm:context-mode@1.0.169"
+        # Desktop notification (OSC 777/99/9) when the agent finishes.
+        "npm:pi-notify@1.4.0"
       ];
     };
   };
