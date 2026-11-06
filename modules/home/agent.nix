@@ -283,6 +283,8 @@ in
         "npm:context-mode@1.0.169"
         # Desktop notification (OSC 777/99/9) when the agent finishes.
         "npm:pi-notify@1.4.0"
+        # Agent loop extension: /loop goal, /loop passes, /loop pipeline.
+        "npm:pi-agent-loop@0.1.1"
       ];
     };
   };
