@@ -11,6 +11,10 @@
   # Use systemd-resolved with custom DNS servers
   networking.networkmanager.enable = true;
 
+  # WiFi: disable power-save (MT7925e on lapwar roams/ping-pongs between two APs;
+  # power-save compounds the instability). Safe for desktop hosts too.
+  networking.networkmanager.wifi.powersave = false;
+
   # Custom DNS servers (via systemd-resolved)
   networking.nameservers = [ "9.9.9.11" "1.1.1.1" ];
 
