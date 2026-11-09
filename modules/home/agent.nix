@@ -200,12 +200,73 @@ let
     ".claude/.credentials.json"
   ];
 
+  # --- pi-box networking under nono ---------------------------------------
+  #
+  # nono's node-dev profile enables network_profile "developer": all egress
+  # is routed through nono's local filtering proxy (it exports HTTP(S)_PROXY
+  # and NODE_USE_ENV_PROXY=1 to the child, so Node/Pi honours it), only
+  # allowlisted domains get CONNECT access, and direct connect(2) is denied
+  # for everything but the proxy itself - including 127.0.0.1 and LAN hosts.
+  # This profile tunes that for Pi; per-invocation extras are passed by piBox
+  # via PI_BOX_* env vars (limits are fixed at launch; prompts inside Pi can
+  # never extend them).
+  piBoxNetwork = {
+    network_profile = "developer";
+    # Multiplex concurrent LLM/subagent requests over one proxy connection.
+    allow_http2 = true;
+    # Domains allowed through the proxy on top of the built-in "developer"
+    # allowlist (npm, GitHub, Anthropic, OpenRouter, cache.nixos.org, ...).
+    # LAN HTTP(S) hosts go here too: IP literals and 192.168.* wildcards are
+    # valid entries, traffic is tunnelled (no TLS interception on plain
+    # hostname entries).
+    allow_domain = [
+      "*.nixos.org" # channels.nixos.org (flake registry), tarballs, ...
+      "*.waays.fr" # git.waays.fr and friends
+    ];
+    # Client-side proxy bypass for raw-TCP LAN targets. A no_proxy entry (IP
+    # literal or *.domain; bare multi-label hostnames and CIDR are rejected)
+    # sends matching traffic direct; connect_port must then permit the port
+    # (Landlock V4+, kernel 6.7+). Needed for non-HTTP LAN services
+    # (Ollama :11434, databases): the child has no DNS, so use IP literals.
+    # Example: no_proxy = [ "192.168.1.50" ]; connect_port = [ 11434 ];
+    no_proxy = [ ];
+    connect_port = [ ];
+    # Loopback TCP IPC (connect+bind), e.g. an HTTP MCP server on
+    # 127.0.0.1:3333. Without entries even localhost connects are denied.
+    open_port = [ ];
+    # Ports Pi itself may listen on (bind only).
+    listen_port = [ ];
+  };
+
+  # Installed to ~/.config/nono/profiles/pi.json; home-manager writes it
+  # from outside the sandbox (nono protects its config dir from children).
+  piBoxNonoProfile = (pkgs.formats.json { }).generate "pi.json" {
+    extends = "node-dev";
+    meta = {
+      name = "pi";
+      description = "Pi coding agent (pi-box): node-dev base plus network egress tuning";
+    };
+    network = piBoxNetwork;
+  };
+
   # Runs the whole Pi process under nono (Landlock), so limits also bind
-  # extensions and child processes. Network stays open: pi-web-access needs it.
+  # extensions and child processes. Egress is proxied and filtered per the
+  # ~/.config/nono/profiles/pi.json profile above (see piBoxNetwork).
   # The --read paths are required on NixOS, nono's profiles do not cover them.
   # --allow-cwd grants the launch directory, hence the refusal of $HOME and its
   # parents. ~/.npm is npm's cache: without write access, `npm install` (pi
   # package installs) fails with EACCES inside the sandbox.
+  #
+  # Per-invocation network extras (space-separated, repeatable, no rebuild):
+  #   PI_BOX_ALLOW_DOMAINS   egress through the proxy: hostnames, IP literals,
+  #                          wildcards (192.168.*, *.home.lan), URL path globs
+  #   PI_BOX_CONNECT_PORTS   raw-TCP dials bypassing the proxy; pair with a
+  #                          no_proxy entry in piBoxNetwork or traffic still
+  #                          goes through the proxy and is dropped
+  #   PI_BOX_OPEN_PORTS      loopback TCP IPC (connect+bind)
+  #   PI_BOX_LISTEN_PORTS    ports Pi itself may bind
+  #   PI_BOX_UPSTREAM_PROXY  chain all egress through an upstream proxy
+  #                          (host:port; e.g. a corporate proxy)
   piBox = pkgs.writeShellScriptBin "pi-box" ''
     case "$HOME/" in
       "''${PWD%/}"/*)
@@ -217,10 +278,23 @@ let
     # what is in /tmp/jiti outside the sandbox, so never grant that one.
     export TMPDIR="$HOME/.pi/box-tmp"
     mkdir -p "$TMPDIR"
-    exec ${pkgs.nono}/bin/nono run --profile node-dev --allow-cwd \
+
+    netFlags=()
+    for d in ''${PI_BOX_ALLOW_DOMAINS:-}; do netFlags+=(--allow-domain "$d"); done
+    for p in ''${PI_BOX_CONNECT_PORTS:-}; do netFlags+=(--allow-connect-port "$p"); done
+    for p in ''${PI_BOX_OPEN_PORTS:-}; do netFlags+=(--open-port "$p"); done
+    for p in ''${PI_BOX_LISTEN_PORTS:-}; do netFlags+=(--listen-port "$p"); done
+    if [ -n "''${PI_BOX_UPSTREAM_PROXY:-}" ]; then
+      netFlags+=(--upstream-proxy "$PI_BOX_UPSTREAM_PROXY")
+    fi
+
+    exec ${pkgs.nono}/bin/nono run \
+      --profile "$HOME/.config/nono/profiles/pi.json" \
+      --allow-cwd \
       --read /nix/store --read /run/current-system \
       --read /etc/profiles --read /etc/static \
       --allow "$HOME/.pi" --allow "$HOME/.npm" \
+      "''${netFlags[@]}" \
       -- pi "$@"
   '';
 in
@@ -288,6 +362,9 @@ in
       ];
     };
   };
+
+  # nono profile used by pi-box (see piBoxNetwork above).
+  home.file.".config/nono/profiles/pi.json".source = piBoxNonoProfile;
 
   # Updates installed `packages` in ~/.pi/agent/npm/ but does not install newly
   # declared ones: plain `pi` does that at startup, pi-box cannot. Needs

@@ -65,7 +65,16 @@ Long comment in `modules/core/packages.nix` explains why.
   start, so run that once before `pi-box`.
 - `pi-box` (`modules/home/agent.nix`) runs Pi under nono from a project
   directory; plain `pi` stays unsandboxed. Limits are fixed at launch, so
-  approving a Pi prompt cannot get past them: add a flag to `pi-box` instead.
+  approving a Pi prompt cannot get past them. Egress goes through nono's
+  filtering proxy (network profile "developer" via the Nix-managed
+  `~/.config/nono/profiles/pi.json`, see `piBoxNetwork` in the module): only
+  allowlisted domains work and direct `connect(2)` is denied for everything
+  but the proxy (including 127.0.0.1 and LAN). Per-invocation extras without a
+  rebuild: `PI_BOX_ALLOW_DOMAINS` (proxy egress: hostnames, IP literals,
+  `192.168.*` wildcards), `PI_BOX_CONNECT_PORTS` (raw-TCP dial ports, pair
+  with a `no_proxy` IP entry in `piBoxNetwork`), `PI_BOX_OPEN_PORTS`
+  (loopback connect+bind), `PI_BOX_LISTEN_PORTS` (bind only),
+  `PI_BOX_UPSTREAM_PROXY` (chain egress through an upstream proxy).
 - `rtk init --agent pi` is deliberately NOT run: it would drop a second
   rewriter (`~/.pi/agent/extensions/rtk.ts`) next to the `pi-rtk-optimizer`
   package, which already delegates to `rtk rewrite`.
