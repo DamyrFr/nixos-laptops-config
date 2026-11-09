@@ -26,6 +26,7 @@
     overlays = {
       nixpkgs.overlays = [
         sofka.overlays.default
+        (import ./overlays/pi-coding-agent.nix)
       ];
     };
   in {
