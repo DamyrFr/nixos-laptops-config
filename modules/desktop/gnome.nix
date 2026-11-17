@@ -102,6 +102,11 @@
         region = "fr_FR.UTF-8";
       };
 
+      # Calendar - Show week numbers (Settings > Date & Time)
+      "org/gnome/desktop/calendar" = {
+        show-weekdate = true;
+      };
+
       # Window manager preferences
       "org/gnome/desktop/wm/preferences" = {
         theme = "Adwaita-light";
