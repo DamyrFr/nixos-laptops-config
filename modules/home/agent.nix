@@ -221,7 +221,10 @@ let
     # hostname entries).
     allow_domain = [
       "*.nixos.org" # channels.nixos.org (flake registry), tarballs, ...
-      "*.waays.fr" # git.waays.fr and friends
+      "*.waays.eu"
+      "*.waays.fr"
+      "*.github.com"
+      "*.gitlab.com"
     ];
     # Client-side proxy bypass for raw-TCP LAN targets. A no_proxy entry (IP
     # literal or *.domain; bare multi-label hostnames and CIDR are rejected)

@@ -60,6 +60,7 @@
     ncdu
     fastfetch
     tree
+    devbox
 
     # Search and text processing
     ripgrep
