@@ -2,14 +2,18 @@
  * Custom bottom UI for pi, installed by modules/home/agent.nix as
  * ~/.pi/agent/extensions/status-footer.ts. /footer toggles it.
  *
- *   ~/nixos-config  ⎇ pi • session                    claude-opus-5-5 · high
- *   ctx ▰▰▰▱▱▱▱▱▱▱ 31% 62k/200k │ cache 94% · R1.2M W48k │ ↑8k ↓21k │ $0.412 +0.018 sub
+ *   ~/nixos-config  ⎇ pi +12 −3 • session            claude-opus-5-5 · high
+ *   ctx ▰▰▰▱▱▱▱▱▱▱ 31% 62k/200k │ 🔌 1 │ cache 94% · R1.2M W48k │ ↑8k ↓21k │ $0.412 +0.018 sub
  *
  * Segments are dropped by priority on narrow terminals (tokens first, then
  * cache, then cost) instead of being cut mid-word. Avoid nested theme.fg():
  * it ends with \x1b[39m and resets the outer color.
  */
 
+import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { CustomEditor } from "@earendil-works/pi-coding-agent";
 import type { ExtensionAPI, ExtensionContext, KeybindingsManager } from "@earendil-works/pi-coding-agent";
 import type { EditorTheme, TUI } from "@earendil-works/pi-tui";
@@ -30,6 +34,81 @@ function shortPwd(cwd: string): string {
 	const home = process.env.HOME || process.env.USERPROFILE;
 	if (home && (cwd === home || cwd.startsWith(home + "/"))) return "~" + cwd.slice(home.length);
 	return cwd;
+}
+
+// Staged-change counters (+ added / - deleted) shown next to the branch.
+// `git diff --cached --numstat` per render would be far too expensive, so
+// results are cached for a short TTL; branch changes invalidate immediately
+// (they trigger a re-render via onBranchChange and miss the cache).
+const STAGED_TTL_MS = 2000;
+let stagedCache: { at: number; branch: string; add: number; del: number } | undefined;
+
+function stagedStats(ctx: ExtensionContext, branch: string): { add: number; del: number } | undefined {
+	if (stagedCache && stagedCache.branch === branch && Date.now() - stagedCache.at < STAGED_TTL_MS) {
+		return stagedCache;
+	}
+	try {
+		const r = spawnSync("git", ["-C", ctx.sessionManager.getCwd(), "diff", "--cached", "--numstat", "--no-color"], {
+			encoding: "utf8",
+			timeout: 2000,
+		});
+		let add = 0;
+		let del = 0;
+		if (r.status === 0) {
+			for (const line of r.stdout.split("\n")) {
+				// Binary files report "-" for both counts; skip them.
+				const m = line.match(/^(\d+|-)\s+(\d+|-)\s+/);
+				if (m) {
+					if (m[1] !== "-") add += Number(m[1]);
+					if (m[2] !== "-") del += Number(m[2]);
+				}
+			}
+		}
+		stagedCache = { at: Date.now(), branch, add, del };
+		return stagedCache;
+	} catch {
+		return undefined;
+	}
+}
+
+// MCP servers: configured (user/project mcp.json + extension registrations)
+// vs connected. Pi registers a server's tools as mcp__<server>__<tool> when
+// it connects and re-registers them with `hidden` exposure when the
+// connection drops or the server is disabled, so a server is connected when
+// it exposes at least one non-hidden tool. Server names in tool names are
+// sanitized ([^a-zA-Z0-9_] -> _), so configured names are sanitized the
+// same way before comparing. `exposure: "hidden"` servers are unreachable
+// by design and do not count as configured.
+function mcpStats(pi: ExtensionAPI, cwd: string) {
+	const sanitize = (name: string) => name.replace(/[^a-zA-Z0-9_]/g, "_");
+	const configured = new Map<string, boolean>();
+	const readJson = (path: string) => {
+		try {
+			const raw = JSON.parse(readFileSync(path, "utf8")) as {
+				mcpServers?: Record<string, { enabled?: boolean; exposure?: string }>;
+			};
+			// A project entry with the same name replaces the user-level one.
+			for (const [name, cfg] of Object.entries(raw.mcpServers ?? {})) {
+				configured.set(sanitize(name), (cfg?.enabled ?? true) && cfg?.exposure !== "hidden");
+			}
+		} catch {
+			/* missing or invalid file: ignore */
+		}
+	};
+	readJson(join(process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent"), "mcp.json"));
+	readJson(join(cwd, ".pi", "mcp.json"));
+	for (const server of pi.getMcpServers()) {
+		const cfg = server.config as { enabled?: boolean; exposure?: string };
+		configured.set(sanitize(server.name), (cfg.enabled ?? true) && cfg.exposure !== "hidden");
+	}
+	const total = [...configured.values()].filter(Boolean).length;
+	const connected = new Set<string>();
+	for (const tool of pi.getAllTools()) {
+		if (tool.exposure === "hidden") continue;
+		const m = /^mcp__(.+?)__/.exec(tool.name);
+		if (m) connected.add(m[1]);
+	}
+	return { connected: connected.size, total };
 }
 
 // Same accounting as pi's built-in footer: every entry that carries usage,
@@ -84,7 +163,16 @@ export default function (pi: ExtensionAPI) {
 
 					// --- line 1: where + what -----------------------------------
 					const branch = footerData.getGitBranch();
-					const git = branch ? theme.fg("success", `⎇ ${branch}`) : theme.fg("warning", "∉ no-git");
+					const staged = branch ? stagedStats(ctx, branch) : undefined;
+					let git = branch ? theme.fg("success", `⎇ ${branch}`) : theme.fg("warning", "∉ no-git");
+					// Staged +/- next to the branch, only when there is something staged.
+					if (branch && staged && staged.add + staged.del > 0) {
+						git +=
+							dim(" ") +
+							theme.fg("success", `+${staged.add}`) +
+							dim(" ") +
+							theme.fg("error", `-${staged.del}`);
+					}
 					const name = ctx.sessionManager.getSessionName();
 					const where = dim(shortPwd(ctx.sessionManager.getCwd())) + "  " + git + (name ? dim(` • ${name}`) : "");
 
@@ -113,6 +201,17 @@ export default function (pi: ExtensionAPI) {
 						});
 					} else if (window > 0) {
 						segs.push({ prio: 0, text: label("ctx") + dim("▱".repeat(BAR_WIDTH)) + " " + muted(`?/${fmtTokens(window)}`) });
+					}
+
+					// MCP servers (🔌): show the count only when something is configured;
+					// N/M (colored) while some server is not connected yet or failing.
+					const mcp = mcpStats(pi, ctx.sessionManager.getCwd());
+					if (mcp.total > 0) {
+						const text =
+							mcp.connected >= mcp.total
+								? muted(`${mcp.connected}`)
+								: theme.fg(level(mcp.connected === 0, true), `${mcp.connected}/${mcp.total}`);
+						segs.push({ prio: 2, text: dim("🔌 ") + text });
 					}
 
 					if (total.cacheRead || total.cacheWrite) {
@@ -200,9 +299,23 @@ export default function (pi: ExtensionAPI) {
 		ctx.ui.setEditorComponent(factory);
 	};
 
+	// MCP servers connect in the background after startup; re-render for a
+	// short window so the count settles without waiting for user activity.
+	// Kept in installFooter's scope: requestRender only exists in tui mode.
+	let mcpPoll: ReturnType<typeof setInterval> | undefined;
+
 	pi.on("session_start", (_event, ctx) => {
 		installFooter(ctx);
 		installEditor(ctx);
+		clearInterval(mcpPoll);
+		const until = Date.now() + 15_000;
+		mcpPoll = setInterval(() => {
+			if (!requestRender || Date.now() >= until) {
+				clearInterval(mcpPoll);
+				return;
+			}
+			requestRender();
+		}, 1000);
 	});
 
 	pi.on("model_select", () => requestRender?.());
