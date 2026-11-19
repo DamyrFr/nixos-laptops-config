@@ -225,6 +225,17 @@ let
       "*.waays.fr"
       "*.github.com"
       "*.gitlab.com"
+      # pi-web-access (web_search) providers actually reachable without an
+      # API key: zero-config Exa MCP (mcp.exa.ai) plus its direct API, and
+      # the keyless fallbacks. Keyed providers (Brave, Tavily, Firecrawl,
+      # Jina, Kagi, Serper, ...) are deliberately NOT allowed: without a key
+      # in ~/.pi/agent/web-search.json they are never contacted. Add them
+      # here (or per-invocation via PI_BOX_ALLOW_DOMAINS) if keys are set up.
+      "mcp.exa.ai"
+      "api.exa.ai"
+      "html.duckduckgo.com"
+      "degoog.org"
+      "api.keenable.ai"
     ];
     # Client-side proxy bypass for raw-TCP LAN targets. A no_proxy entry (IP
     # literal or *.domain; bare multi-label hostnames and CIDR are rejected)
